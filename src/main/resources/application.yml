@@ -6,3 +6,7 @@ spring:
     url: jdbc:mysql://www.liukang666.cn/db_homework?characterEncoding=utf-8&useSSL=false
   jpa:
     show-sql: true
+
+wechat:
+  appId: wx07c2f70bc511f031
+  secret: 66c79c9d56271af7c71886812df0d306
