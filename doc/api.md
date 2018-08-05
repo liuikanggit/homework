@@ -1,8 +1,21 @@
+``登录``
+url：api/student/login
+methods:GET
+data: {
+    code:code
+}
+``结果``
+{
+  "code": 0,
+  "msg": "成功",
+  "data": id
+ }
+
 ``获取学生资料``
-url：api/student/info
+url：api/student/infoid
 methods：GET
 data：{
-    studentid:1
+    id:1
 }
 ``结果``
 {

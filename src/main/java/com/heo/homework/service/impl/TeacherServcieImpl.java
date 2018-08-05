@@ -4,8 +4,7 @@ import com.heo.homework.entity.Teacher;
 import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
 import com.heo.homework.form.ClassForm;
-import com.heo.homework.form.TeacherInfoForm;
-import com.heo.homework.repository.ClassRepository;
+import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.repository.TeacherRepository;
 import com.heo.homework.service.TeacherService;
 import com.heo.homework.service.WechatLoginService;
@@ -63,7 +62,7 @@ public class TeacherServcieImpl implements TeacherService{
      * @return
      */
     @Override
-    public ResultVO modifyTeacherInfo(TeacherInfoForm teacherInfoForm) {
+    public ResultVO modifyTeacherInfo(UserInfoForm teacherInfoForm) {
         Teacher teacher = teacherRepository.findByTeacherId(teacherInfoForm.getId());
         if (Objects.isNull(teacher)){
             throw new MyException(ResultEnum.TEACHER_NOT_ENPTY);
@@ -76,10 +75,5 @@ public class TeacherServcieImpl implements TeacherService{
         /** 返回最新的资料 */
         UserInfoVO userInfoVO = new UserInfoVO(teacher);
         return ResultVOUtil.success(userInfoVO);
-    }
-
-    @Override
-    public ResultVO createClass(ClassForm classForm) {
-        return null;
     }
 }

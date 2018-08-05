@@ -1,6 +1,6 @@
 package com.heo.homework.service;
 
-import com.heo.homework.form.StudentInfoForm;
+import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.vo.ResultVO;
 
 public interface StudentService {
@@ -12,5 +12,5 @@ public interface StudentService {
     public ResultVO getStudentInfo(String studentId);
 
     /** 修改学生资料 */
-    public ResultVO modifyStudentInfo(StudentInfoForm studentInfoForm);
+    public ResultVO modifyStudentInfo(UserInfoForm studentInfoForm);
 }

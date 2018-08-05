@@ -1,7 +1,7 @@
 package com.heo.homework.controller;
 
 import com.heo.homework.form.LoginIdForm;
-import com.heo.homework.form.StudentInfoForm;
+import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.service.StudentService;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ResultVO;
@@ -17,30 +17,21 @@ import javax.validation.Valid;
 @Slf4j
 public class SutdentController {
 
-    @Autowired StudentService studentService;
-
-    /**
-     * 学生登录
-     * @param code
-     * @return
-     */
-    @GetMapping("login")
-    public ResultVO login(@RequestParam String code) {
-        return studentService.login(code);
-    }
+    @Autowired
+    StudentService studentService;
 
     /**
      * 获取学生信息
-     * @param LoginIdForm
+     * @param loginIdForm
      * @param bindingResult
      * @return
      */
     @GetMapping("/info")
-    public ResultVO getStudentInfo(@Valid LoginIdForm LoginIdForm, BindingResult bindingResult){
+    public ResultVO getStudentInfo(@Valid LoginIdForm loginIdForm, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return studentService.getStudentInfo(LoginIdForm.getId());
+        return studentService.getStudentInfo(loginIdForm.getId());
     }
 
     /**
@@ -50,7 +41,7 @@ public class SutdentController {
      * @return
      */
     @PostMapping("/info")
-    public ResultVO modifyStudentInfo(@Valid StudentInfoForm studentInfoForm, BindingResult bindingResult){
+    public ResultVO modifyStudentInfo(@Valid UserInfoForm studentInfoForm, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }

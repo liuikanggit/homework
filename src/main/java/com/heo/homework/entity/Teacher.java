@@ -1,6 +1,6 @@
 package com.heo.homework.entity;
 
-import com.heo.homework.form.TeacherInfoForm;
+import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.utils.KeyUtil;
 import lombok.Data;
 
@@ -34,7 +34,7 @@ public class Teacher {
         this.teacherId = KeyUtil.genUniqueKey();
     }
 
-    public void setTeacherInfo(TeacherInfoForm teacherInfo){
+    public void setTeacherInfo(UserInfoForm teacherInfo){
         this.teacherName = teacherInfo.getName();
         this.teacherPhone = teacherInfo.getPhone();
         this.teacherAvatarUrl = teacherInfo.getAvatarUrl();

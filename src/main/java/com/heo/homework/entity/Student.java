@@ -1,6 +1,6 @@
 package com.heo.homework.entity;
 
-import com.heo.homework.form.StudentInfoForm;
+import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.utils.KeyUtil;
 import lombok.Data;
 
@@ -36,7 +36,7 @@ public class Student {
         this.studentId = KeyUtil.genUniqueKey();
     }
 
-    public void setStudentInfo(StudentInfoForm studentInfoForm){
+    public void setStudentInfo(UserInfoForm studentInfoForm){
         this.studentNid = studentInfoForm.getNid();
         this.studentName = studentInfoForm.getName();
         this.studentPhone = studentInfoForm.getPhone();

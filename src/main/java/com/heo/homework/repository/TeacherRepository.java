@@ -2,8 +2,13 @@ package com.heo.homework.repository;
 
 import com.heo.homework.entity.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface TeacherRepository extends JpaRepository<Teacher,String>{
-    public Teacher findByOpenid(String openid);
-    public Teacher findByTeacherId(String teacherId);
+    Teacher findByOpenid(String openid);
+    Teacher findByTeacherId(String teacherId);
+    @Query(value = "select teacherId  from Teacher ")
+    List<String> findAllTeacehrId();
 }

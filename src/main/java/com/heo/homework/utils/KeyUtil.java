@@ -1,5 +1,6 @@
 package com.heo.homework.utils;
 
+import java.util.List;
 import java.util.Random;
 
 public class KeyUtil {
@@ -10,9 +11,18 @@ public class KeyUtil {
      * @return
      */
     public static synchronized String genUniqueKey() {
-        Random random = new Random();
-        Integer number = random.nextInt(900000) + 100000;
+        return System.currentTimeMillis() + String.valueOf(getRandomNuber());
+    }
 
-        return System.currentTimeMillis() + String.valueOf(number);
+    public static synchronized String getClassKey(List<String > classIds) {
+        String classId = String.valueOf(getRandomNuber());
+        while (classIds.contains(classId)){
+            classId = String.valueOf(getRandomNuber());
+        }
+        return classId;
+    }
+
+    public static Integer getRandomNuber(){
+        return new Random().nextInt(900000) + 100000;
     }
 }
