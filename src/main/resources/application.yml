@@ -6,7 +6,15 @@ spring:
     url: jdbc:mysql://www.liukang666.cn/db_homework?characterEncoding=utf-8&useSSL=false
   jpa:
     show-sql: true
+  resources:
+    static-locations: ${uploadPath.savePath},${uploadPath.tempPath}
 
 wechat:
   appId: wx07c2f70bc511f031
   secret: 66c79c9d56271af7c71886812df0d306
+
+image:
+  dir: avatar,homework
+  tempPath: G:\\homework\\temp
+  savePath: G:\\homework\\save
+  expireTime: 1 #图片过期时间 单位天

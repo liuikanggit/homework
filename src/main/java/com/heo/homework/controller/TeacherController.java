@@ -18,17 +18,21 @@ import javax.validation.Valid;
 @RequestMapping("/api/teacher")
 public class TeacherController {
 
-    @Autowired
-    private TeacherService teacherService;
+    private final TeacherService teacherService;
+
+    private final ClassService classService;
 
     @Autowired
-    private ClassService classService;
+    public TeacherController(TeacherService teacherService, ClassService classService) {
+        this.teacherService = teacherService;
+        this.classService = classService;
+    }
 
     /**
      * 获取个人信息
-     * @param loginIdForm
-     * @param bindingResult
-     * @return
+     * @param loginIdForm 登录信息
+     * @param bindingResult 表单验证结果
+     * @return 教师的个人信息
      */
     @GetMapping("/info")
     public ResultVO getTeacherInfo(@Valid LoginIdForm loginIdForm, BindingResult bindingResult){

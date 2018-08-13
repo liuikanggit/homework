@@ -8,26 +8,21 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
 
-@Entity(name = "student2class")
+@Entity
 @Data
-public class Student2Class {
+public class HomeworkImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String studentId;
+    private String homeworkDetailId;
 
-    private String classId;
+    private String imageUrl;
+
+    private Integer del = 0;
 
     private Date createTime;
 
     private Date updateTime;
-
-    public Student2Class(){}
-
-    public Student2Class(String studentId,String classId){
-        this.studentId =studentId;
-        this.classId = classId;
-    }
 }

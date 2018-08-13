@@ -2,6 +2,7 @@ package com.heo.homework.utils;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class KeyUtil {
 
@@ -21,6 +22,7 @@ public class KeyUtil {
         }
         return classId;
     }
+
 
     public static Integer getRandomNuber(){
         return new Random().nextInt(900000) + 100000;

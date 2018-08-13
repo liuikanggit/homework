@@ -29,7 +29,9 @@ public class AuthAspect {
     @Autowired
     private TeacherRepository teacherRepository;
 
-    @Pointcut("execution(public * com.heo.homework.controller.SutdentController.*(..)) || execution(public * com.heo.homework.controller.TeacherController.*(..))")
+    @Pointcut("execution(public * com.heo.homework.controller.SutdentController.*(..))"
+            + " || execution(public * com.heo.homework.controller.TeacherController.*(..))"
+            + " || execution(public * com.heo.homework.controller.UploadImageController.*(..))")
     public void verify(){}
 
     @Before("verify()")
