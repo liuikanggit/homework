@@ -68,11 +68,11 @@ public class ClassServiceImpl implements ClassService{
 
     private Class getClassByClassId(String classId){
         if(!Strings.isEmpty(classId)){
-            throw new MyException(ResultEnum.REQUSET_EXCEPTION);
+            throw new MyException(ResultEnum.REQUEST_EXCEPTION);
         }
         Class mClass = classRepository.findByClassId(classId);
         if (Objects.isNull(mClass)){
-            throw new MyException(ResultEnum.CLASS_NOT_ENPTY);
+            throw new MyException(ResultEnum.CLASS_NOT_EMPTY);
         }
         return mClass;
     }

@@ -15,6 +15,10 @@ public class KeyUtil {
         return System.currentTimeMillis() + String.valueOf(getRandomNuber());
     }
 
+    public static synchronized String getUUID(){
+        return UUID.randomUUID().toString() + String.valueOf(getRandomNuber());
+    }
+
     public static synchronized String getClassKey(List<String > classIds) {
         String classId = String.valueOf(getRandomNuber());
         while (classIds.contains(classId)){

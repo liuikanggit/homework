@@ -1,5 +1,7 @@
 package com.heo.homework.service.impl;
 
+import com.heo.homework.config.TemplateIDConfig;
+import com.heo.homework.dto.MessageParam;
 import com.heo.homework.entity.*;
 import com.heo.homework.entity.Class;
 import com.heo.homework.enums.ResultEnum;
@@ -12,11 +14,14 @@ import com.heo.homework.repository.*;
 import com.heo.homework.service.StudentService;
 import com.heo.homework.service.UploadImageService;
 import com.heo.homework.service.WechatLoginService;
+import com.heo.homework.service.WechatMessageService;
+import com.heo.homework.utils.DateUtil;
 import com.heo.homework.utils.ResultVOUtil;
-import com.heo.homework.vo.HomeworkVO;
-import com.heo.homework.vo.ResultVO;
-import com.heo.homework.vo.UserInfoVO;
+import com.heo.homework.vo.*;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -53,8 +58,14 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private UploadImageService uploadImageService;
 
+    @Autowired
+    private WechatMessageService wechatMessageService;
+
+    @Autowired
+    private TemplateIDConfig templateIDConfig;
+
     @Override
-    public ResultVO login(String code) {
+    public ResultVO login(String code,String formId) {
 
         /** 用code换取openid */
         String openid = wechatLoginService.auth(code);
@@ -64,7 +75,16 @@ public class StudentServiceImpl implements StudentService {
         if( student == null){
             /** 第一次登录 创建一个学生 */
             student = new Student(openid);
-            studentRepository.save(student);
+            student = studentRepository.save(student);
+
+            /** 推送信息 */
+            MessageParam messageParam = new MessageParam(student.getStudentId(),openid,templateIDConfig.getRegisterNotice(),templateIDConfig.getRegisterPath(),formId)
+                    .addData("注册成功")
+                    .addData(student.getStudentName())
+                    .addData("学生")
+                    .addData("请尽快完善个人资料")
+                    .addData(DateUtil.formatter(student.getCreateTime()));
+            wechatMessageService.sendMessage(messageParam);
         }
         /** 把学生id返回 */
         return ResultVOUtil.success(student.getStudentId());
@@ -80,7 +100,7 @@ public class StudentServiceImpl implements StudentService {
 
         Student student = studentRepository.findByStudentId(studentId);
         if (Objects.isNull(student)){
-            throw new MyException(ResultEnum.STUDENT_NOT_ENPTY);
+            throw new MyException(ResultEnum.STUDENT_EMPTY);
         }
         UserInfoVO userInfoVO = new UserInfoVO(student);
         if (userInfoVO.isBlank())
@@ -94,7 +114,7 @@ public class StudentServiceImpl implements StudentService {
 
         Student student = studentRepository.findByStudentId(studentInfoForm.getId());
         if (Objects.isNull(student)){
-            throw new MyException(ResultEnum.STUDENT_NOT_ENPTY);
+            throw new MyException(ResultEnum.STUDENT_EMPTY);
         }
 
         /** 更新学生资料 */
@@ -107,23 +127,64 @@ public class StudentServiceImpl implements StudentService {
     }
 
     /**
+     * 搜索班级
+     * @param classIdForm
+     * @return
+     */
+    @Override
+    public ResultVO searchClass(ClassIdForm classIdForm) {
+        String studentId = classIdForm.getId();
+        String classId = classIdForm.getClassId();
+        Class mClass = classRepository.findByClassId(classId);
+        /** 判断班级是否存在 */
+        if(Objects.isNull(mClass)){
+            throw new MyException(ResultEnum.CLASS_NOT_EMPTY);
+        }
+
+        ClassProfileVO classProfileVO = new ClassProfileVO();
+        classProfileVO.setClassId(mClass.getClassId());
+        classProfileVO.setClassAvatarUrl(mClass.getClassAvatarUrl());
+        classProfileVO.setClassName(mClass.getClassName());
+        classProfileVO.setClassSubject(mClass.getClassSubject());
+        classProfileVO.setTeacherName(teacherRepository.getTeacherNameByTeacherId(mClass.getTeacherId()));
+
+        classProfileVO.setIsNeedPwd(!Strings.isEmpty(mClass.getClassPassword()));
+
+        /** 查看学生是否重复加入班级 */
+        if( ! Objects.isNull(student2ClassRepository.findByStudentIdAndClassId(studentId,classId))){
+            classProfileVO.setStatus(1);
+        }else {
+            classProfileVO.setStatus(0);
+        }
+        classProfileVO.setJoinNumber(student2ClassRepository.findStudentIdByClassId(classId).size());
+        return ResultVOUtil.success(classProfileVO);
+    }
+
+    /**
      * 加入班级
      * @param classIdForm 学生id 和 班级id
      * @return 成功
      */
     @Override
-    public ResultVO joinClass(@Valid ClassIdForm classIdForm) {
+    public ResultVO joinClass(ClassIdForm classIdForm,String password) {
         String studentId = classIdForm.getId();
         String classId = classIdForm.getClassId();
 
         /** 判断班级是否存在 */
-        if(Objects.isNull(classRepository.findByClassId(classId))){
-            throw new MyException(ResultEnum.CLASS_NOT_ENPTY);
+        Class mClass = classRepository.findByClassId(classId);
+        if(Objects.isNull(mClass)){
+            throw new MyException(ResultEnum.CLASS_NOT_EMPTY);
         }
+
         /** 查看学生是否重复加入班级 */
-        if( ! Objects.isNull(student2ClassRepository.findByStudentIdAndAndClassId(studentId,classId))){
+        if( ! Objects.isNull(student2ClassRepository.findByStudentIdAndClassId(studentId,classId))){
             throw new MyException(ResultEnum.REPEAT_THE_CLASS);
         }
+
+        if (!password.equals(mClass.getClassPassword())){
+            throw new MyException(ResultEnum.REPEAT_THE_CLASS);
+        }
+
         Student2Class student2Class = new Student2Class(classIdForm.getId(),classIdForm.getClassId());
 
         student2ClassRepository.save(student2Class);
@@ -137,12 +198,11 @@ public class StudentServiceImpl implements StudentService {
      * @return 作业信息
      */
     @Override
-    public ResultVO getHomework(String studentId) {
-
+    public ResultVO getHomework(String studentId,int start,int size) {
         List<HomeworkVO> homeworkVOList = new ArrayList<>();
 
-        List<HomeworkDetail> homeworkDetailList = homeworkDetailRepository.findAllByStudentIdOrderByUpdateTimeDesc(studentId);
-
+        Page<HomeworkDetail> homeworkDetailPage = homeworkDetailRepository.findAllByStudentIdOrderByUpdateTimeDesc(studentId,new PageRequest(start,size));
+        List<HomeworkDetail> homeworkDetailList = homeworkDetailPage.getContent();
         for (HomeworkDetail homeworkDetail: homeworkDetailList) {
             HomeworkVO homeworkVO = new HomeworkVO();
 
@@ -151,22 +211,70 @@ public class StudentServiceImpl implements StudentService {
             Teacher teacher = teacherRepository.findByTeacherId(mClss.getTeacherId());
 
             homeworkVO.setHomeworkId(homework.getHomeworkId());
-            homeworkVO.setClassId(mClss.getClassId());
-            homeworkVO.setClassName(mClss.getClassName());
             homeworkVO.setSubject(mClss.getClassSubject());
             homeworkVO.setHomeworkDesc(homework.getHomeworkDesc());
             homeworkVO.setTeacherName(teacher.getTeacherName());
-            homeworkVO.setTeacherId(teacher.getTeacherId());
-            homeworkVO.setStatus(homeworkDetail.getHomeworkStatus());
-            List<String> imageUrls = homeworkImageRepository.getImageUrlListByHomeworkDetailId(homeworkDetail.getId());
-            homeworkVO.setHomeworkImageUrls(imageUrls);
+
+            Integer homeworkStatus = homeworkDetail.getHomeworkStatus();
+            homeworkVO.setStatus(homeworkStatus);
+            if (homeworkStatus >0){
+                homeworkVO.setSubmitTime(homeworkDetail.getSubmitTime());
+            }
+
             homeworkVO.setBeginTime(homework.getCreateTime());
             homeworkVO.setEndTime(homework.getEndTime());
 
             homeworkVOList.add(homeworkVO);
         }
 
-        return ResultVOUtil.success(homeworkVOList);
+
+        return ResultVOUtil.success(new PageVo<>(homeworkDetailPage.getTotalPages(),homeworkDetailPage.getTotalElements(),homeworkVOList));
+    }
+
+    @Override
+    public ResultVO getHomeworkDetail(HomeworkIdForm homeworkIdForm){
+        String studentId = homeworkIdForm.getId();
+        String homeworkId = homeworkIdForm.getHomeworkId();
+        HomeworkDetailVO homeworkDetailVO = new HomeworkDetailVO();
+        Homework homework = homeworkRepository.findById(homeworkId).get();
+        if (Objects.isNull(homework)){
+            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
+        }
+        HomeworkDetail homeworkDetail = homeworkDetailRepository.findByStudentIdAndHomeworkId(studentId,homeworkId);
+        if (Objects.isNull(homeworkDetail)){
+            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
+        }
+        Class mClss = classRepository.findByClassId(homework.getClassId());
+        if (Objects.isNull(homeworkDetail)){
+            throw new MyException(ResultEnum.CLASS_NOT_EMPTY);
+        }
+        Teacher teacher = teacherRepository.findByTeacherId(mClss.getTeacherId());
+        if (Objects.isNull(homeworkDetail)){
+            throw new MyException(ResultEnum.TEACHER_EMPTY);
+        }
+
+        homeworkDetailVO.setHomeworkId(homeworkId);
+        homeworkDetailVO.setClassId(mClss.getClassId());
+        homeworkDetailVO.setClassName(mClss.getClassName());
+        homeworkDetailVO.setSubject(mClss.getClassSubject());
+        homeworkDetailVO.setHomeworkDesc(homework.getHomeworkDesc());
+        homeworkDetailVO.setTeacherId(teacher.getTeacherId());
+        homeworkDetailVO.setTeacherName(teacher.getTeacherName());
+        homeworkDetailVO.setStatus(homeworkDetail.getHomeworkStatus());
+        Integer homeworkStatus = homeworkDetail.getHomeworkStatus();
+        homeworkDetailVO.setStatus(homeworkStatus);
+        if (homeworkStatus >0){
+            Integer number = homeworkDetail.getSubmitNumber();
+            List<String> imageUrls = homeworkImageRepository.getImageUrlListByHomeworkDetailId(homeworkDetail.getId(),number);
+            if (null != imageUrls){
+                homeworkDetailVO.setHomeworkImageUrls(imageUrls);
+            }
+            homeworkDetailVO.setSubmitTime(homeworkDetail.getSubmitTime());
+        }
+        homeworkDetailVO.setBeginTime(homework.getCreateTime());
+        homeworkDetailVO.setEndTime(homework.getEndTime());
+
+        return ResultVOUtil.success(homeworkDetailVO);
     }
 
     /**
@@ -179,12 +287,12 @@ public class StudentServiceImpl implements StudentService {
     public ResultVO submitHomework(SubmitHomeworkForm submitHomeworkForm) {
         String studentId = submitHomeworkForm.getId();
         String homeworkId = submitHomeworkForm.getHomeworkId();
-        List<String> imageUrlList = Arrays.asList(submitHomeworkForm.getHomeworkImageUrls().split(",|，"));
+        List<String> imageList = submitHomeworkForm.getImage();
 
         /** 查看作业是否存在 */
         Homework homework = homeworkRepository.findById(homeworkId).get();
         if (Objects.isNull(homework)){
-            throw new MyException(ResultEnum.HOMEWORK_NOT_ENPTY);
+            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
         }
         /** 查看是否已经截止 */
         if (homework.getEndTime().before(new Date())){
@@ -198,11 +306,14 @@ public class StudentServiceImpl implements StudentService {
 
         homeworkDetail.setSubmitTime(new Date()); //提交时间
         homeworkDetail.setHomeworkStatus(1); //以提交
-        for (String imageUrl :imageUrlList) {
+        Integer number = homeworkDetail.getSubmitNumber() + 1;//获取提交的次数
+        homeworkDetail.setSubmitNumber(number);
+        for (String imageUrl :imageList) {
             if (uploadImageService.saveImage(imageUrl)) { //保存图片  如果图片之前没有
                 HomeworkImage homeworkImage = new HomeworkImage();
                 homeworkImage.setHomeworkDetailId(homeworkDetail.getId());
                 homeworkImage.setImageUrl(imageUrl);
+                homeworkImage.setNumber(number);
                 homeworkImageRepository.save(homeworkImage); //图片地址到数据库
             }
         }

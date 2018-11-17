@@ -31,7 +31,7 @@ public class StudentServiceImplTest {
         ClassIdForm classIdForm = new ClassIdForm();
         classIdForm.setId("1");
         classIdForm.setClassId("111111");
-        ResultVO resultVO = studentService.joinClass(classIdForm);
+        ResultVO resultVO = studentService.joinClass(classIdForm,"");
         log.info("result:{}",resultVO);
         Assert.assertEquals(resultVO.getCode(),new Integer(0));
     }

@@ -1,10 +1,8 @@
 package com.heo.homework.controller;
 
-import com.heo.homework.form.ClassForm;
-import com.heo.homework.form.ClassIdForm;
-import com.heo.homework.form.LoginIdForm;
-import com.heo.homework.form.UserInfoForm;
+import com.heo.homework.form.*;
 import com.heo.homework.service.ClassService;
+import com.heo.homework.service.HomeworkService;
 import com.heo.homework.service.TeacherService;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ResultVO;
@@ -15,17 +13,20 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/teacher")
+@RequestMapping("teacher")
 public class TeacherController {
 
     private final TeacherService teacherService;
 
     private final ClassService classService;
 
+    private final HomeworkService homeworkService;
+
     @Autowired
-    public TeacherController(TeacherService teacherService, ClassService classService) {
+    public TeacherController(TeacherService teacherService, ClassService classService, HomeworkService homeworkService) {
         this.teacherService = teacherService;
         this.classService = classService;
+        this.homeworkService = homeworkService;
     }
 
     /**
@@ -86,15 +87,23 @@ public class TeacherController {
 
     /**
      * 得到一个班级信息
-     * @param ClassIdForm
+     * @param classIdForm
      * @param bindingResult
      * @return
      */
     @GetMapping("/class")
-    public ResultVO getClassInfo(@Valid ClassIdForm ClassIdForm, BindingResult bindingResult){
+    public ResultVO getClassInfo(@Valid ClassIdForm classIdForm, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return classService.getClassInfo(ClassIdForm);
+        return classService.getClassInfo(classIdForm);
+    }
+
+    @PostMapping("/homeword")
+    public ResultVO assignmentHomework(@Valid HomeworkForm homeworkForm,BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
+        }
+        return homeworkService.assignmentHomework(homeworkForm);
     }
 }

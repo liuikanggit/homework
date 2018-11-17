@@ -3,10 +3,6 @@ package com.heo.homework.utils;
 
 import com.heo.homework.vo.ResultVO;
 
-/**
- * Created by 廖师兄
- * 2017-05-15 00:22
- */
 public class ResultVOUtil {
 
     public static ResultVO success(Object object) {

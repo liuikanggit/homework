@@ -1,9 +1,12 @@
 package com.heo.homework.entity;
 
+import com.heo.homework.form.HomeworkForm;
+import com.heo.homework.utils.KeyUtil;
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.Valid;
 import java.util.Date;
 
 @Entity
@@ -25,4 +28,12 @@ public class Homework {
 
     /** 修改时间 */
     private Date updateTime;
+
+    public Homework(HomeworkForm homeworkForm) {
+        homeworkId = KeyUtil.genUniqueKey();
+        classId = homeworkForm.getClassId();
+        homeworkDesc = homeworkForm.getDesc();
+        endTime = homeworkForm.getEndTime();
+        createTime = new Date();
+    }
 }

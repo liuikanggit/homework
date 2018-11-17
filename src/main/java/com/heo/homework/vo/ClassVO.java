@@ -13,7 +13,13 @@ public class ClassVO {
 
     /** 加入密码 */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String classPassword ;
+    private String classPassword;
+
+    /**班级名称 */
+    private String className;
+
+    /** 老师名称 */
+    private String teacherName;
 
     /** 年级 */
     private String grade;

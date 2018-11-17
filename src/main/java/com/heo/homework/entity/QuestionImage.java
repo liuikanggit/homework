@@ -9,17 +9,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
 
-@Entity
 @Data
-public class HomeworkImage {
+@Entity
+public class QuestionImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String homeworkDetailId;
-
-    private Integer number = 1;
+    private String questionId;
 
     private String imageUrl;
 
@@ -28,4 +26,5 @@ public class HomeworkImage {
     private Date createTime;
 
     private Date updateTime;
+
 }

@@ -1,5 +1,6 @@
 package com.heo.homework.form;
 
+import com.heo.homework.enums.ResultEnum;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;

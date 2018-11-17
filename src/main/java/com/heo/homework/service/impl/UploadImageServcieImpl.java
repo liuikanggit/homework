@@ -40,7 +40,8 @@ public class UploadImageServcieImpl implements UploadImageService {
             throw new MyException(ResultEnum.FILE_TYPE_ERROR);
         }
 
-        String newFilename = type + "/" + KeyUtil.genUniqueKey() + "." + suffixName;
+        /**生成图片名称*/
+        String newFilename = "/"+type + "/" + KeyUtil.getUUID() + "." + suffixName;
 
         try {
             Files.copy(file.getInputStream(), Paths.get(uploadImageConfig.getTempPath(), newFilename));
@@ -84,7 +85,6 @@ public class UploadImageServcieImpl implements UploadImageService {
         for (String dir : uploadImageConfig.getDir()) {
             tempImageDirList.add(Paths.get(uploadImageConfig.getTempPath(), dir));
         }
-
         try {
             for (Path tempImageDir : tempImageDirList) {
                 DirectoryStream<Path> stream = Files.newDirectoryStream(tempImageDir);

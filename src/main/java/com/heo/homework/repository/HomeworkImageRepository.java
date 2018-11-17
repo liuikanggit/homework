@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface HomeworkImageRepository extends JpaRepository<HomeworkImage,Integer>{
 
-    @Query("select imageUrl from HomeworkImage where homeworkDetailId = homeworkDetailId and del = 0")
+    @Query("select imageUrl from HomeworkImage where homeworkDetailId = ?1 and del = 0")
     List<String> getImageUrlListByHomeworkDetailId(String homeworkDetailId);
+
+    @Query("select imageUrl from HomeworkImage where homeworkDetailId = ?1 and number = ?2 and del = 0")
+    List<String> getImageUrlListByHomeworkDetailId(String homeworkDetailId,Integer number);
 }

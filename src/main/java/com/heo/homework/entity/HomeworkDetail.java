@@ -1,5 +1,7 @@
 package com.heo.homework.entity;
 
+import com.heo.homework.constant.HomeworkStatus;
+import com.heo.homework.utils.KeyUtil;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -17,11 +19,13 @@ public class HomeworkDetail {
 
     private String studentId;
 
-    /** 作业状态 0：未提交  1：待审核 2：通过 3：没通过 */
-    private Integer homeworkStatus = 0;
+    private Integer homeworkStatus = HomeworkStatus.NO_LOOK;
 
     /**  作业提交时间 */
     private Date submitTime;
+
+    /** 提交次数 */
+    private Integer submitNumber = 0;
 
     /** 老师批改作业时间 */
     private Date checkTime;

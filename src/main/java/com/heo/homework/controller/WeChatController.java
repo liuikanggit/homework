@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 public class WeChatController {
 
     @Autowired
@@ -25,12 +25,17 @@ public class WeChatController {
      * @return
      */
     @GetMapping("/student/login")
-    public ResultVO sutdnetLogin(@RequestParam String code) {
-        return studentService.login(code);
+    public ResultVO studentLogin(@RequestParam String code,@RequestParam(required = false) String formId) {
+        return studentService.login(code,formId);
     }
 
+    /**
+     * 教师登录
+     * @param code
+     * @return
+     */
     @GetMapping("/teacher/login")
-    public ResultVO teacherLogin(@RequestParam String code){
-        return teacherService.login(code);
+    public ResultVO teacherLogin(@RequestParam String code,@RequestParam(required = false) String formId){
+        return teacherService.login(code,formId);
     }
 }

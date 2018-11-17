@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("upload")
+@RequestMapping("/upload")
 public class UploadImageController {
 
     @Autowired
@@ -21,9 +21,10 @@ public class UploadImageController {
     @Autowired
     private UploadImageConfig uploadImageConfig;
 
-    @PostMapping
+    @PostMapping("/image")
     public ResultVO uploadImage(@RequestParam(required = false) MultipartFile file,@RequestParam(required = false,defaultValue = "") String type){
 
+        /**  avatar,homework */
         for (String dir : uploadImageConfig.getDir()) {
             if (type.equals(dir)){
                 return uploadImageService.uploadImage(file,type);

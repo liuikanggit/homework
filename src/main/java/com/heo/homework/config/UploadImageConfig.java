@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "image")
+@ConfigurationProperties(prefix = "upload")
 public class UploadImageConfig {
 
     private List<String> dir;

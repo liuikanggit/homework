@@ -5,16 +5,18 @@ import com.heo.homework.service.StudentService;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("api/student/")
+@RequestMapping("/student")
 @Slf4j
-public class SutdentController {
+public class StudentController {
 
     @Autowired
     private StudentService studentService;
@@ -48,31 +50,60 @@ public class SutdentController {
     }
 
     /**
-     * 加入班级
-     * @param classIdForm 学生id 班级id
-     * @param bindingResult 表单验证结果
-     * @return 成功
+     * 搜索班级
+     * @param classIdForm
+     * @param bindingResult
+     * @return
      */
-    @PutMapping("/jion")
-    public ResultVO jionClass(@Valid ClassIdForm classIdForm, BindingResult bindingResult){
+    @GetMapping("/class")
+    public ResultVO searchClass(@Valid ClassIdForm classIdForm, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return studentService.joinClass(classIdForm);
+        return studentService.searchClass(classIdForm);
     }
 
     /**
-     * 查询学生的作业
+     * 加入班级
+     * @param classIdForm 学生id 班级id
+     * @param password 密码
+     * @param bindingResult 表单验证结果
+     * @return 成功
+     */
+    @PutMapping("/class")
+    public ResultVO joinClass(@Valid ClassIdForm classIdForm,@RequestParam(required = false,defaultValue = "") String password ,BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
+        }
+        return studentService.joinClass(classIdForm,password);
+    }
+
+    /**
+     * 查询学生的所有作业(分页)
      * @param loginIdForm 学生id
      * @param bindingResult 表单验证结果
      * @return 作业信息
      */
     @GetMapping("/homework")
-    public ResultVO getHomework(@Valid LoginIdForm loginIdForm,BindingResult bindingResult){
+    public ResultVO getHomework(@Valid LoginIdForm loginIdForm,@RequestParam int page,@RequestParam int size, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return studentService.getHomework(loginIdForm.getId());
+        return studentService.getHomework(loginIdForm.getId(),page,size);
+    }
+
+    /**
+     * 获取作业详情
+     * @param homeworkIdForm 学生id 作业homeworkId
+     * @param bindingResult 表单验证结果
+     * @return
+     */
+    @GetMapping("/homework/detail")
+    public ResultVO getHomeworkDetail(@Valid HomeworkIdForm homeworkIdForm,BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
+        }
+        return studentService.getHomeworkDetail(homeworkIdForm);
     }
 
     /**

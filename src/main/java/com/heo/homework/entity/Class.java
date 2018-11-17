@@ -3,8 +3,7 @@ package com.heo.homework.entity;
 import com.heo.homework.form.ClassForm;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -42,6 +41,7 @@ public class Class {
     /** 修改时间 */
     private Date updateTime;
 
+    public Class(){}
 
     public void setClassInfo(ClassForm classForm){
         this.className = classForm.getName();

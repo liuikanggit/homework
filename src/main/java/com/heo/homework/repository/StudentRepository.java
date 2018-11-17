@@ -12,4 +12,6 @@ public interface StudentRepository extends JpaRepository<Student,String> {
 
     @Query(value = "select studentId  from Student")
     List<String> findAllStudentId();
+
+
 }
