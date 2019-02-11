@@ -16,14 +16,17 @@ import com.heo.homework.service.UploadImageService;
 import com.heo.homework.service.WechatLoginService;
 import com.heo.homework.service.WechatMessageService;
 import com.heo.homework.utils.DateUtil;
+import com.heo.homework.utils.KeyUtil;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.*;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
@@ -156,7 +159,7 @@ public class StudentServiceImpl implements StudentService {
         }else {
             classProfileVO.setStatus(0);
         }
-        classProfileVO.setJoinNumber(student2ClassRepository.findStudentIdByClassId(classId).size());
+        classProfileVO.setJoinNumber(student2ClassRepository.countByClassId(classId));
         return ResultVOUtil.success(classProfileVO);
     }
 
@@ -181,10 +184,12 @@ public class StudentServiceImpl implements StudentService {
             throw new MyException(ResultEnum.REPEAT_THE_CLASS);
         }
 
+        /** 判断密码是否相同 */
         if (!password.equals(mClass.getClassPassword())){
-            throw new MyException(ResultEnum.REPEAT_THE_CLASS);
+            throw new MyException(ResultEnum.CLASS_PSW_ERROR);
         }
 
+        /** 加入到班级 */
         Student2Class student2Class = new Student2Class(classIdForm.getId(),classIdForm.getClassId());
 
         student2ClassRepository.save(student2Class);
@@ -201,17 +206,17 @@ public class StudentServiceImpl implements StudentService {
     public ResultVO getHomework(String studentId,int start,int size) {
         List<HomeworkVO> homeworkVOList = new ArrayList<>();
 
-        Page<HomeworkDetail> homeworkDetailPage = homeworkDetailRepository.findAllByStudentIdOrderByUpdateTimeDesc(studentId,new PageRequest(start,size));
+        Page<HomeworkDetail> homeworkDetailPage = homeworkDetailRepository.findAllByStudentIdOrderByUpdateTimeDesc(studentId,PageRequest.of(start,size));
         List<HomeworkDetail> homeworkDetailList = homeworkDetailPage.getContent();
         for (HomeworkDetail homeworkDetail: homeworkDetailList) {
             HomeworkVO homeworkVO = new HomeworkVO();
 
             Homework homework = homeworkRepository.findById(homeworkDetail.getHomeworkId()).get();
-            Class mClss = classRepository.findByClassId(homework.getClassId());
-            Teacher teacher = teacherRepository.findByTeacherId(mClss.getTeacherId());
+            Class mClass = classRepository.findByClassId(homework.getClassId());
+            Teacher teacher = teacherRepository.findByTeacherId(mClass.getTeacherId());
 
             homeworkVO.setHomeworkId(homework.getHomeworkId());
-            homeworkVO.setSubject(mClss.getClassSubject());
+            homeworkVO.setSubject(mClass.getClassSubject());
             homeworkVO.setHomeworkDesc(homework.getHomeworkDesc());
             homeworkVO.setTeacherName(teacher.getTeacherName());
 
@@ -226,8 +231,6 @@ public class StudentServiceImpl implements StudentService {
 
             homeworkVOList.add(homeworkVO);
         }
-
-
         return ResultVOUtil.success(new PageVo<>(homeworkDetailPage.getTotalPages(),homeworkDetailPage.getTotalElements(),homeworkVOList));
     }
 
@@ -311,13 +314,85 @@ public class StudentServiceImpl implements StudentService {
         for (String imageUrl :imageList) {
             if (uploadImageService.saveImage(imageUrl)) { //保存图片  如果图片之前没有
                 HomeworkImage homeworkImage = new HomeworkImage();
-                homeworkImage.setHomeworkDetailId(homeworkDetail.getId());
+                homeworkImage.setHomeworkId(homeworkDetail.getId());
                 homeworkImage.setImageUrl(imageUrl);
                 homeworkImage.setNumber(number);
                 homeworkImageRepository.save(homeworkImage); //图片地址到数据库
             }
         }
 
+        return ResultVOUtil.success();
+    }
+
+    @Override
+    public ResultVO getAllClassInfo( String studentId,int pageNum,int size) {
+        Page page = student2ClassRepository.findClassIdByStudentId(studentId,PageRequest.of(pageNum,size));
+        List<String> classIdList = page.getContent();
+        List<Class> classList = classRepository.findByClassIdIn(classIdList);
+
+        List<ClassVO> classVoList = new ArrayList<>();
+        for (Class mClass:  classList) {
+            String teacherName = teacherRepository.getTeacherNameByTeacherId(mClass.getTeacherId());
+            Integer classNumber = student2ClassRepository.countByClassId(mClass.getClassId());
+            ClassVO classVO = new ClassVO(mClass,teacherName,classNumber);
+            classVO.hidePassword();
+            classVoList.add(classVO);
+        }
+        return ResultVOUtil.success(new PageVo<>(page.getTotalPages(),page.getTotalElements(),classVoList));
+    }
+
+    public ResultVO getStudent(int page, int size, String name, String sex, String phone,String classId){
+
+        PageRequest pageRequest = PageRequest.of(page, size, new Sort(Sort.Direction.DESC, "updateTime"));
+
+        Page<Student> studentPage = studentRepository.findAll((Root<Student> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if(Strings.isNotEmpty(name)){
+                predicates.add(criteriaBuilder.like(root.get("studentName"),"%"+name+"%"));
+            }
+            if(Strings.isNotEmpty(sex)){
+                predicates.add(criteriaBuilder.equal(root.get("sex"),sex));
+            }
+            if(Strings.isNotEmpty(phone)){
+                predicates.add(criteriaBuilder.like(root.get("studentPhone"),"%" + phone + "%"));
+            }
+            if(Strings.isNotEmpty(classId)){
+                Path<Object> path = root.get("studentId");
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
+
+                List<String> studentIdList = student2ClassRepository.findStudentIdByClassId(classId);
+                studentIdList.forEach( id -> {
+                    in.value(id);
+                });
+                predicates.add(in) ;
+            }
+
+            Predicate lPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            return criteriaBuilder.and(lPredicate);
+        },pageRequest);
+
+        List<UserInfoVO> userInfoVOList = new ArrayList<>();
+        studentPage.getContent().forEach(e -> {
+            List<Map<String,String>> classMap = new ArrayList<>();
+            classRepository.findClassMapByStudentId(e.getStudentId()).forEach(cl -> {
+                Map<String,String> map = new HashMap<>();
+                map.put("classId",cl[0].toString());
+                map.put("className",cl[1].toString());
+                classMap.add(map);
+            });
+            userInfoVOList.add(new UserInfoVO(e,classMap));
+        });
+
+        PageVo pageVo = new PageVo(studentPage.getTotalPages(),studentPage.getTotalElements(), userInfoVOList);
+        return ResultVOUtil.success(pageVo);
+    }
+
+    @Override
+    public ResultVO addStudent(UserInfoForm userInfoForm) {
+
+        Student student = new Student("openid");
+        student.setStudentInfo(userInfoForm);
+        studentRepository.save(student);
         return ResultVOUtil.success();
     }
 }

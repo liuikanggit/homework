@@ -14,6 +14,8 @@ public class UserInfoForm extends LoginIdForm {
 
     private String phone;
 
+    private String sex;
+
     @NotEmpty(message = "头像不能为空")
     private String avatarUrl;
 

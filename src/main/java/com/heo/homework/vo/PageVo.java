@@ -13,6 +13,8 @@ public class PageVo<T> {
 
     private T data;
 
+    public PageVo(){}
+
     public PageVo(int totalPages,long totalData,T data){
         this.totalData = totalData;
         this.totalPages = totalPages;

@@ -39,7 +39,7 @@ public class WechatMessageServiceImpl implements WechatMessageService{
     /** 获取access_token */
     private void getAccessToken(){
         RestTemplate restTemplate = new RestTemplate();
-        String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+
+        final String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+
                 wechatAccountConfig.getAppId()+
                 "&secret="+
                 wechatAccountConfig.getSecret();
@@ -89,6 +89,7 @@ public class WechatMessageServiceImpl implements WechatMessageService{
             }else{
                 log.error("信息推送失败 其他错误.",result);
             }
+
         }
         return false;
     }

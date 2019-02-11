@@ -48,9 +48,6 @@ public class HomeworkDetailVO {
     /** 作业状态 0：未提交  1：待审核 2：通过 3：没通过 */
     private Integer status;
 
-    @JsonProperty("question")
-    private List<QuestionVO> questionVOList;
-
     /** 作业提交图片 */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> homeworkImageUrls;

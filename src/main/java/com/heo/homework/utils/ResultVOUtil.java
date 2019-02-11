@@ -1,6 +1,7 @@
 package com.heo.homework.utils;
 
 
+import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.vo.ResultVO;
 
 public class ResultVOUtil {
@@ -21,6 +22,17 @@ public class ResultVOUtil {
         ResultVO resultVO = new ResultVO();
         resultVO.setCode(code);
         resultVO.setMsg(msg);
+        return resultVO;
+    }
+
+    public static ResultVO error(ResultEnum em) {
+        return error(em,null);
+    }
+
+
+    public static ResultVO error(ResultEnum em,String error) {
+        ResultVO resultVO = error(em.getCode(),em.getMessage());
+        resultVO.setData(error);
         return resultVO;
     }
 }

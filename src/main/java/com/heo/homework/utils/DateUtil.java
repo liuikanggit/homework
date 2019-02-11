@@ -8,6 +8,9 @@ public class DateUtil {
 
     public static String formatter(Date date, String pattern){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.CHINA);
+        if(date == null){
+            return simpleDateFormat.format(new Date());
+        }
         return simpleDateFormat.format(date);
     }
 

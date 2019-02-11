@@ -23,6 +23,8 @@ public class Teacher {
 
     private String teacherPhone;
 
+    private String sex;
+
     private Date createTime;
 
     private Date updateTime;
@@ -38,6 +40,7 @@ public class Teacher {
         this.teacherName = teacherInfo.getName();
         this.teacherPhone = teacherInfo.getPhone();
         this.teacherAvatarUrl = teacherInfo.getAvatarUrl();
+        this.sex = teacherInfo.getSex();
     }
 
 }

@@ -47,7 +47,7 @@ public class ClassRepositoryTest {
     @Test
     public void findAll(){
         Page<Class> classPage = classRepository.findAll(new PageRequest(0,10));
-        PageVo page = new PageVo();
-        log.info("一共：{} 数据:{}",classPage);
+        PageVo page = new PageVo(classPage.getTotalPages(),classPage.getTotalElements(),classPage.getContent());
+        log.info("一共：{} 数据:{}",page);
     }
 }

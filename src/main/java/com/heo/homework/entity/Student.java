@@ -25,6 +25,8 @@ public class Student {
 
     private String studentPhone = "";
 
+    private String sex = "未填写";
+
     private Date createTime;
 
     private Date updateTime;

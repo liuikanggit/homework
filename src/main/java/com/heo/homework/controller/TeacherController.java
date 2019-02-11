@@ -45,9 +45,9 @@ public class TeacherController {
 
     /**
      * 修改信息
-     * @param teacherInfoForm
-     * @param bindingResult
-     * @return
+     * @param teacherInfoForm 教师信息
+     * @param bindingResult 表单验证结果
+     * @return 结果
      */
     @PostMapping("/info")
     public ResultVO modifyTeacherInfo(@Valid UserInfoForm teacherInfoForm, BindingResult bindingResult ){
@@ -59,9 +59,9 @@ public class TeacherController {
 
     /**
      * 创建班级
-     * @param classForm
-     * @param bindingResult
-     * @return
+     * @param classForm 班级表单
+     * @param bindingResult 表单验证结果
+     * @return 结果
      */
     @PutMapping("/class")
     public ResultVO createClass(@Valid ClassForm classForm,BindingResult bindingResult){
@@ -73,9 +73,9 @@ public class TeacherController {
 
     /**
      * 修改班级信息
-     * @param classForm
-     * @param bindingResult
-     * @return
+     * @param classForm 班级表单
+     * @param bindingResult 表单验证结果
+     * @return 结果
      */
     @PostMapping("/class")
     public ResultVO modifyClassInfo(@Valid ClassForm classForm,BindingResult bindingResult){
@@ -87,9 +87,9 @@ public class TeacherController {
 
     /**
      * 得到一个班级信息
-     * @param classIdForm
-     * @param bindingResult
-     * @return
+     * @param classIdForm 班级表单
+     * @param bindingResult 表单验证结果
+     * @return 结果
      */
     @GetMapping("/class")
     public ResultVO getClassInfo(@Valid ClassIdForm classIdForm, BindingResult bindingResult){
@@ -99,7 +99,13 @@ public class TeacherController {
         return classService.getClassInfo(classIdForm);
     }
 
-    @PostMapping("/homeword")
+    /**
+     * 布置作业
+     * @param homeworkForm 作业表单
+     * @param bindingResult 表单验证结果
+     * @return 结果
+     */
+    @PostMapping("/homework")
     public ResultVO assignmentHomework(@Valid HomeworkForm homeworkForm,BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());

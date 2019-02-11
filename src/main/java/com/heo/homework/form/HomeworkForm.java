@@ -14,8 +14,6 @@ public class HomeworkForm extends ClassIdForm{
     @NotEmpty(message = "作业描述不能为空")
     private String desc;
 
-    private String[] questionId;
-
     @NotEmpty(message = "截至日期不能为空")
     private Date endTime;
 

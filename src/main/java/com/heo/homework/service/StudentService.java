@@ -17,6 +17,7 @@ public interface StudentService {
     /** 修改学生资料 */
     ResultVO modifyStudentInfo(UserInfoForm studentInfoForm);
 
+    /** 所有班级 */
     ResultVO searchClass(ClassIdForm classIdForm);
 
     /** 加入班级 */
@@ -31,4 +32,11 @@ public interface StudentService {
     /** 提交作业 */
     ResultVO submitHomework(SubmitHomeworkForm submitHomeworkForm);
 
+    /** 获取学生加入所有班级信息 */
+    ResultVO getAllClassInfo(String studentId,int page,int size);
+
+    /** 获取学生 条件分页 */
+    ResultVO getStudent(int page, int size, String name, String sex, String phone,String classId);
+
+    ResultVO addStudent(UserInfoForm userInfoForm);
 }

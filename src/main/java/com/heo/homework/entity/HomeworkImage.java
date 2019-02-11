@@ -17,7 +17,7 @@ public class HomeworkImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String homeworkDetailId;
+    private String homeworkId;
 
     private Integer number = 1;
 

@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class ClassServiceImpl implements ClassService{
@@ -85,9 +85,23 @@ public class ClassServiceImpl implements ClassService{
     @Override
     public ResultVO getClassInfo(ClassIdForm classIdForm) {
         Class mClass = getClassByClassId(classIdForm.getClassId());
-
         ClassVO classVO = new ClassVO();
         BeanUtils.copyProperties(mClass,classVO);
         return ResultVOUtil.success(classVO);
+    }
+
+    @Override
+    public ResultVO getClassMap() {
+        List<Object[]> classList = classRepository.findClassMap();
+
+        List<Map> classMap = new ArrayList<Map>();
+        classList.forEach(o -> {
+            Map<String,String> map = new HashMap<>();
+            map.put("classId",o[0].toString());
+            map.put("className",o[1].toString());
+            classMap.add(map);
+        });
+
+        return ResultVOUtil.success(classMap);
     }
 }

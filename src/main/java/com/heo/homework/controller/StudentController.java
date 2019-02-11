@@ -9,6 +9,7 @@ import org.springframework.beans.BeanInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -70,8 +71,8 @@ public class StudentController {
      * @param bindingResult 表单验证结果
      * @return 成功
      */
-    @PutMapping("/class")
-    public ResultVO joinClass(@Valid ClassIdForm classIdForm,@RequestParam(required = false,defaultValue = "") String password ,BindingResult bindingResult){
+    @PutMapping(value = "/class")
+    public ResultVO joinClass(@Valid ClassIdForm classIdForm,BindingResult bindingResult,@RequestParam(required = false,defaultValue = "") String password){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
@@ -85,7 +86,7 @@ public class StudentController {
      * @return 作业信息
      */
     @GetMapping("/homework")
-    public ResultVO getHomework(@Valid LoginIdForm loginIdForm,@RequestParam int page,@RequestParam int size, BindingResult bindingResult){
+    public ResultVO getHomework(@Valid LoginIdForm loginIdForm,BindingResult bindingResult,@RequestParam int page,@RequestParam int size ){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
@@ -118,5 +119,21 @@ public class StudentController {
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
         return studentService.submitHomework(submitHomeworkForm);
+    }
+
+    /**
+     *  查询自己加入的班级
+     * @param loginIdForm id
+     * @param bindingResult 表单验证结果
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/class/joined")
+    public ResultVO getAllClassInfo(@Valid LoginIdForm loginIdForm,BindingResult bindingResult,@RequestParam int page,@RequestParam int size)  {
+        if (bindingResult.hasErrors()){
+            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
+        }
+        return studentService.getAllClassInfo(loginIdForm.getId(),page,size);
     }
 }

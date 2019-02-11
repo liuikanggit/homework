@@ -48,11 +48,6 @@ public class HomeworkServiceImpl implements HomeworkService{
     @Autowired
     private ClassRepository classRepository;
 
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
-    private Homework2QuestionRepository homework2QuestionRepository;
 
     @Autowired
     private TemplateIDConfig templateIDConfig;
@@ -66,15 +61,6 @@ public class HomeworkServiceImpl implements HomeworkService{
     @Transactional
     public ResultVO assignmentHomework(HomeworkForm homeworkForm) {
         Homework homework = new Homework(homeworkForm);
-
-        List<Homework2Question> homework2QuestionList = new ArrayList<>();
-        for (String questionId:homeworkForm.getQuestionId()){
-            if(Objects.isNull(questionRepository.findById(questionId).get()) ){
-                throw new MyException(ResultEnum.QUESTION_EMPTY);
-            }
-            homework2QuestionList.add(new Homework2Question(homeworkForm.getHomeworkId(),questionId));
-        }
-        homework2QuestionRepository.saveAll(homework2QuestionList);
 
         homeworkRepository.save(homework);
 
@@ -101,7 +87,6 @@ public class HomeworkServiceImpl implements HomeworkService{
                     .addData(DateUtil.formatter(homework.getCreateTime(),"yyyy年MM月dd日"))  //发布时间
                     .addData(DateUtil.formatter(homework.getEndTime(),"yyyy年MM月dd日")); //完成时间
             wechatMessageService.sendMessage(messageParam);
-
 
         }
         return ResultVOUtil.success();

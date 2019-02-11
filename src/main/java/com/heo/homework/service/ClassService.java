@@ -7,11 +7,14 @@ import com.heo.homework.vo.ResultVO;
 public interface ClassService {
 
     /** 创建班级 */
-    public ResultVO createClass(ClassForm classForm);
+    ResultVO createClass(ClassForm classForm);
 
     /** 修改班级信息 */
-    public ResultVO modifyClass(ClassForm classForm);
+    ResultVO modifyClass(ClassForm classForm);
 
     /** 通过班级id 得到班级信息 */
-    public ResultVO getClassInfo(ClassIdForm classIdForm);
+    ResultVO getClassInfo(ClassIdForm classIdForm);
+
+    /** 获取班级map */
+    ResultVO getClassMap();
 }

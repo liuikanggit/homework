@@ -3,16 +3,16 @@ package com.heo.homework.constant;
 /**
  * 删除状态
  */
-public class DelStatus {
+public interface DelStatus {
 
     /**
      * 以删除
      */
-    public static final Integer DEL = 1;
+    Integer DEL = 1;
 
     /**
      * 未删除
      */
-    public static final Integer NOT_DEL = 0;
+    Integer NOT_DEL = 0;
 
 }

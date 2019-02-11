@@ -15,4 +15,14 @@ public interface ClassRepository extends JpaRepository<Class,String> {
     List<String> findAllClassId();
 
     Class findByClassId(String classId);
+
+    List<Class> findByClassIdIn(List<String> classIdList);
+
+    @Query(value = "select classId, className from Class")
+    List<Object[]> findClassMap();
+
+    @Query(value = "select c.class_id,c.class_name from class c where c.class_id in (select sc.class_id from student2class sc where sc.student_id = ?1)"
+            ,nativeQuery = true)
+    List<Object[]> findClassMapByStudentId(String studentId);
+
 }

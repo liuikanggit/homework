@@ -28,9 +28,18 @@ public enum ResultEnum {
     FILE_TYPE_ERROR(503,"文件类型错误"),
     FILE_NOT_EXISTS(504,"文件不存在"),
 
+    ADMIN_EMPTY(601,"管理员用户不存在"),
+    ADMIN_PASSWORD_ERROR(602,"管理员登录密码错误"),
+
+
+
     SYSTEM_EXCEPTION(-1,"系统异常"),
     REQUEST_EXCEPTION(-2,"请求异常"),
     NO_AUTH(-3,"无权限操作"),
+    LOGIN_INVALID(-4,"登录过期，请重新登录"),
+
+    MISSING_PARAMETERS(-100,"请求缺少参数"),
+    METHOD_NOT_SUPPORTED(-101,"请求方法不支持"),
 
     INVALID_CODE(40029,"code无效")
     ;
