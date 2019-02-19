@@ -67,7 +67,7 @@ public class TeacherController {
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
         String teacherId = (String) request.getAttribute("userId");
-        return classService.createClass(teacherId,classForm);
+        return teacherService.createClass(teacherId,classForm);
     }
 
     /**
@@ -82,7 +82,7 @@ public class TeacherController {
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
         String teacherId = (String) request.getAttribute("userId");
-        return classService.modifyClass(teacherId,classId,classForm);
+        return teacherService.modifyClass(teacherId,classId,classForm);
     }
 
     /**
