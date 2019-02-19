@@ -29,9 +29,9 @@ public class Homework {
     /** 修改时间 */
     private Date updateTime;
 
-    public Homework(HomeworkForm homeworkForm) {
+    public Homework(HomeworkForm homeworkForm,String classId) {
         homeworkId = KeyUtil.genUniqueKey();
-        classId = homeworkForm.getClassId();
+        classId = classId;
         homeworkDesc = homeworkForm.getDesc();
         endTime = homeworkForm.getEndTime();
         createTime = new Date();

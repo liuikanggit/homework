@@ -48,7 +48,6 @@ public class Class {
         this.grade = classForm.getGrade();
         this.classSubject = classForm.getSubject();
         this.classPassword = classForm.getPassword();
-        this.teacherId = classForm.getId();
         this.classDesc = classForm.getDesc();
         this.classAvatarUrl = classForm.getAvatarUrl();
     }

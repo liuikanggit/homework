@@ -1,0 +1,10 @@
+upload:
+  dir: avatar,homework
+  tempPath: /data/homework/temp
+  savePath: /data/homework/save
+  expireTime: 1 #图片过期时间 单位天
+
+#解决spring boot以jar包的形式在linux上运行，会报错的问题
+server:
+  tomcat:
+    basedir: /data/homework/apps/temp

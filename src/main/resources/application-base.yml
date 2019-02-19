@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 123123
+    url: jdbc:mysql://www.liukang666.cn/db_homework?characterEncoding=utf-8&useSSL=false
+  jpa:
+    show-sql: true
+  resources:
+    static-locations: file:${upload.savePath},file:${upload.tempPath}
+  redis:
+      host: www.liukang666.cn
+      port: 6379
+      password: 123123
+      timeout: 10000ms
+
+wechat:
+  appId: wx07c2f70bc511f031
+  secret: 66c79c9d56271af7c71886812df0d306
+
+template:
+  #作业通知模板
+  homeworkNotice: Tqn7f1XYXjAm7mBp2dm90vH5drcbsDImsTHac-AMZgQ
+  homeworkPath: /homework
+  #注册成功模板
+  registerNotice: c3x8r484V9gzlNTxrGMDYw-IFokGNhFWpZFchAsG65k
+  registerPath: /info

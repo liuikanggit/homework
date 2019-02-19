@@ -6,9 +6,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class ClassForm extends LoginIdForm{
-
-    private String classId;
+public class ClassForm{
 
     /** 加入密码 */
     @Max(value = 13,message = "密码太长了")

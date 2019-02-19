@@ -1,9 +1,10 @@
 package com.heo.homework.controller;
 
-import com.heo.homework.aspect.AdminAspect;
+import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.service.AdminService;
 import com.heo.homework.service.ClassService;
+import com.heo.homework.service.RedisService;
 import com.heo.homework.service.StudentService;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ResultVO;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -25,6 +25,9 @@ public class AdminController {
     private StudentService studentService;
 
     @Autowired
+    private RedisService redisService;
+
+    @Autowired
     private ClassService classService;
 
     @PostMapping("/login")
@@ -33,13 +36,18 @@ public class AdminController {
     }
 
     @PostMapping("verify")
-    public ResultVO verify(HttpServletRequest request){
-        return  adminService.verify( request.getHeader(AdminAspect.AUTHORIZATION));
+    public ResultVO verify(){
+        boolean flag = redisService.verify();
+        if (flag){
+            return ResultVOUtil.success();
+        }
+        return ResultVOUtil.error(ResultEnum.LOGIN_INVALID);
     }
 
     @PostMapping("/logout")
-    public ResultVO logout(HttpServletRequest request){
-        return adminService.logout(request.getHeader(AdminAspect.AUTHORIZATION));
+    public ResultVO logout(){
+        redisService.logout();
+        return ResultVOUtil.success();
     }
 
     @GetMapping("/student")

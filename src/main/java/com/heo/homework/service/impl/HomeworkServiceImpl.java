@@ -59,13 +59,12 @@ public class HomeworkServiceImpl implements HomeworkService{
      */
     @Override
     @Transactional
-    public ResultVO assignmentHomework(HomeworkForm homeworkForm) {
-        Homework homework = new Homework(homeworkForm);
+    public ResultVO assignmentHomework(String teacherId,String classId,HomeworkForm homeworkForm) {
+        Homework homework = new Homework(homeworkForm,classId);
 
         homeworkRepository.save(homework);
 
         /** 查出班级中所有的学生 */
-        String classId = homeworkForm.getClassId();
         List<String> studentIdList = student2ClassRepository.findStudentIdByClassId(classId);
         for (String studentId : studentIdList){
             HomeworkDetail homeworkDetail = new HomeworkDetail();
@@ -76,7 +75,7 @@ public class HomeworkServiceImpl implements HomeworkService{
 
             /** 推送信息给学生 */
             Student student = studentRepository.findByStudentId(studentId);
-            String teacherName = teacherRepository.getTeacherNameByTeacherId(homeworkForm.getId());
+            String teacherName = teacherRepository.getTeacherNameByTeacherId(teacherId);
             Class mClass = classRepository.findByClassId(homework.getClassId());
             MessageParam messageParam = new MessageParam(student.getStudentId(),student.getOpenid(), templateIDConfig.getHomeworkNotice(),templateIDConfig.getHomeworkPath())
                     .addData(student.getStudentName()) //学生姓名

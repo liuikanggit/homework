@@ -1,14 +1,12 @@
 package com.heo.homework.repository;
 
 import com.heo.homework.entity.Class;
-import com.heo.homework.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
+import org.springframework.stereotype.Repository;
 import java.util.List;
-import java.util.Map;
 
-
+@Repository
 public interface ClassRepository extends JpaRepository<Class,String> {
 
     @Query(value = "select classId from Class")
@@ -25,4 +23,6 @@ public interface ClassRepository extends JpaRepository<Class,String> {
             ,nativeQuery = true)
     List<Object[]> findClassMapByStudentId(String studentId);
 
+    @Query(value = "select teacherId from Class where classId = ?1")
+    String getClassIdByTeacherId(String teacherId);
 }

@@ -1,22 +1,20 @@
 package com.heo.homework.controller;
 
-import com.heo.homework.form.*;
+import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.service.StudentService;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/student")
-@Slf4j
 public class StudentController {
 
     @Autowired
@@ -24,16 +22,13 @@ public class StudentController {
 
     /**
      * 获取学生信息
-     * @param loginIdForm 登录的信息
-     * @param bindingResult
+     * @param request
      * @return
      */
     @GetMapping("/info")
-    public ResultVO getStudentInfo(@Valid LoginIdForm loginIdForm, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return studentService.getStudentInfo(loginIdForm.getId());
+    public ResultVO getStudentInfo(HttpServletRequest request){
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.getStudentInfo(studentId);
     }
 
     /**
@@ -43,97 +38,87 @@ public class StudentController {
      * @return
      */
     @PostMapping("/info")
-    public ResultVO modifyStudentInfo(@Valid UserInfoForm studentInfoForm, BindingResult bindingResult){
+    public ResultVO modifyStudentInfo(@Valid UserInfoForm studentInfoForm, BindingResult bindingResult,HttpServletRequest request){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return studentService.modifyStudentInfo(studentInfoForm);
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.modifyStudentInfo(studentId,studentInfoForm);
     }
 
     /**
      * 搜索班级
-     * @param classIdForm
-     * @param bindingResult
+     * @param classId
      * @return
      */
     @GetMapping("/class")
-    public ResultVO searchClass(@Valid ClassIdForm classIdForm, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return studentService.searchClass(classIdForm);
+    public ResultVO searchClass(@RequestParam String classId,HttpServletRequest request){
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.searchClass(studentId,classId);
     }
 
     /**
      * 加入班级
-     * @param classIdForm 学生id 班级id
-     * @param password 密码
-     * @param bindingResult 表单验证结果
-     * @return 成功
+     * @param classId
+     * @param password
+     * @param request
+     * @return
      */
     @PutMapping(value = "/class")
-    public ResultVO joinClass(@Valid ClassIdForm classIdForm,BindingResult bindingResult,@RequestParam(required = false,defaultValue = "") String password){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return studentService.joinClass(classIdForm,password);
+    public ResultVO joinClass(@RequestParam String classId,@RequestParam(required = false,defaultValue = "") String password,HttpServletRequest request){
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.joinClass(studentId,classId,password);
     }
 
     /**
      * 查询学生的所有作业(分页)
-     * @param loginIdForm 学生id
-     * @param bindingResult 表单验证结果
-     * @return 作业信息
+     * @param request
+     * @param page 第几页
+     * @param size 每页的数量
+     * @return
      */
     @GetMapping("/homework")
-    public ResultVO getHomework(@Valid LoginIdForm loginIdForm,BindingResult bindingResult,@RequestParam int page,@RequestParam int size ){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return studentService.getHomework(loginIdForm.getId(),page,size);
+    public ResultVO getHomework(@RequestParam int page,@RequestParam int size,HttpServletRequest request){
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.getHomework(studentId,page,size);
     }
 
     /**
      * 获取作业详情
-     * @param homeworkIdForm 学生id 作业homeworkId
-     * @param bindingResult 表单验证结果
+     * @param homeworkId
+     * @param request
      * @return
      */
     @GetMapping("/homework/detail")
-    public ResultVO getHomeworkDetail(@Valid HomeworkIdForm homeworkIdForm,BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return studentService.getHomeworkDetail(homeworkIdForm);
+    public ResultVO getHomeworkDetail(@RequestParam String homeworkId,HttpServletRequest request){
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.getHomeworkDetail(studentId,homeworkId);
     }
+
 
     /**
      * 提交作业
-     * @param submitHomeworkForm id：学生id, homeworkId: 作业id，homeworkImageUrl:作业图片地址
-     * @param bindingResult
+     * @param homeworkId
+     * @param image
+     * @param request
      * @return
      */
     @PostMapping("/homework")
-    public ResultVO submitHomework(@Valid SubmitHomeworkForm submitHomeworkForm, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return studentService.submitHomework(submitHomeworkForm);
+    public ResultVO submitHomework(@RequestParam String homeworkId, @RequestParam List<String> image,HttpServletRequest request){
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.submitHomework(studentId,homeworkId,image);
     }
 
     /**
      *  查询自己加入的班级
-     * @param loginIdForm id
-     * @param bindingResult 表单验证结果
+     * @param request id
      * @param page
      * @param size
      * @return
      */
     @GetMapping("/class/joined")
-    public ResultVO getAllClassInfo(@Valid LoginIdForm loginIdForm,BindingResult bindingResult,@RequestParam int page,@RequestParam int size)  {
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return studentService.getAllClassInfo(loginIdForm.getId(),page,size);
+    public ResultVO getAllClassInfo(HttpServletRequest request,@RequestParam int page,@RequestParam int size)  {
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.getAllClassInfo(studentId,page,size);
     }
 }

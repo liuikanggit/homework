@@ -16,7 +16,13 @@ public interface TeacherService {
     ResultVO getTeacherInfo(String teacherId);
 
     /** 修改教师信息 */
-    ResultVO modifyTeacherInfo(UserInfoForm teacherInfoForm);
+    ResultVO modifyTeacherInfo(String teacherId,UserInfoForm teacherInfoForm);
+
+    /** 创建班级 */
+    ResultVO createClass(String teacherId,ClassForm classForm);
+
+    /** 修改班级信息 */
+    ResultVO modifyClass(String teacherId,String classId,ClassForm classForm);
 
 
 

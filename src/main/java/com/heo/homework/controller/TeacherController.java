@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -31,16 +32,12 @@ public class TeacherController {
 
     /**
      * 获取个人信息
-     * @param loginIdForm 登录信息
-     * @param bindingResult 表单验证结果
      * @return 教师的个人信息
      */
     @GetMapping("/info")
-    public ResultVO getTeacherInfo(@Valid LoginIdForm loginIdForm, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return teacherService.getTeacherInfo(loginIdForm.getId());
+    public ResultVO getTeacherInfo(HttpServletRequest request){
+        String teacherId = (String) request.getAttribute("userId");
+        return teacherService.getTeacherInfo(teacherId);
     }
 
     /**
@@ -50,11 +47,12 @@ public class TeacherController {
      * @return 结果
      */
     @PostMapping("/info")
-    public ResultVO modifyTeacherInfo(@Valid UserInfoForm teacherInfoForm, BindingResult bindingResult ){
+    public ResultVO modifyTeacherInfo(HttpServletRequest request,@Valid UserInfoForm teacherInfoForm, BindingResult bindingResult ){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return teacherService.modifyTeacherInfo(teacherInfoForm);
+        String teacherId = (String) request.getAttribute("userId");
+        return teacherService.modifyTeacherInfo(teacherId,teacherInfoForm);
     }
 
     /**
@@ -64,11 +62,12 @@ public class TeacherController {
      * @return 结果
      */
     @PutMapping("/class")
-    public ResultVO createClass(@Valid ClassForm classForm,BindingResult bindingResult){
+    public ResultVO createClass(HttpServletRequest request,@Valid ClassForm classForm,BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return classService.createClass(classForm);
+        String teacherId = (String) request.getAttribute("userId");
+        return classService.createClass(teacherId,classForm);
     }
 
     /**
@@ -78,25 +77,22 @@ public class TeacherController {
      * @return 结果
      */
     @PostMapping("/class")
-    public ResultVO modifyClassInfo(@Valid ClassForm classForm,BindingResult bindingResult){
+    public ResultVO modifyClassInfo(@RequestParam String classId,@Valid ClassForm classForm,BindingResult bindingResult,HttpServletRequest request){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return classService.modifyClass(classForm);
+        String teacherId = (String) request.getAttribute("userId");
+        return classService.modifyClass(teacherId,classId,classForm);
     }
 
     /**
      * 得到一个班级信息
-     * @param classIdForm 班级表单
-     * @param bindingResult 表单验证结果
+     * @param classId 班级id
      * @return 结果
      */
     @GetMapping("/class")
-    public ResultVO getClassInfo(@Valid ClassIdForm classIdForm, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
-        }
-        return classService.getClassInfo(classIdForm);
+    public ResultVO getClassInfo(@RequestParam String classId){
+        return classService.getClassInfo(classId);
     }
 
     /**
@@ -106,10 +102,11 @@ public class TeacherController {
      * @return 结果
      */
     @PostMapping("/homework")
-    public ResultVO assignmentHomework(@Valid HomeworkForm homeworkForm,BindingResult bindingResult){
+    public ResultVO assignmentHomework(@RequestParam String classId,@Valid HomeworkForm homeworkForm,BindingResult bindingResult,HttpServletRequest request){
         if (bindingResult.hasErrors()){
             return ResultVOUtil.error(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        return homeworkService.assignmentHomework(homeworkForm);
+        String teacherId = (String) request.getAttribute("userId");
+        return homeworkService.assignmentHomework(teacherId,classId,homeworkForm);
     }
 }

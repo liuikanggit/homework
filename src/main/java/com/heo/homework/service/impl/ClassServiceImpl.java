@@ -4,7 +4,6 @@ import com.heo.homework.entity.Class;
 import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
 import com.heo.homework.form.ClassForm;
-import com.heo.homework.form.ClassIdForm;
 import com.heo.homework.repository.ClassRepository;
 import com.heo.homework.service.ClassService;
 import com.heo.homework.utils.KeyUtil;
@@ -25,46 +24,6 @@ public class ClassServiceImpl implements ClassService{
     @Autowired
     private ClassRepository classRepository;
 
-    /**
-     * 根据传过来的表单，创建班级
-     * @param classForm
-     */
-    @Override
-    @Transactional
-    public ResultVO createClass(ClassForm classForm) {
-        Class mClass = new Class();
-        /** 设置基本信息 名称，头像，年级，科目，描述，密码，创建教师id */
-        mClass.setClassInfo(classForm);
-        mClass.setClassId(KeyUtil.getClassKey(classRepository.findAllClassId()));
-        mClass = classRepository.save(mClass);
-
-        ClassVO classVO = new ClassVO();
-        BeanUtils.copyProperties(mClass,classVO);
-        return ResultVOUtil.success(classVO);
-    }
-
-    /**
-     * 修改班级信息
-     * @param classForm
-     * @return
-     */
-    @Override
-    @Transactional
-    public ResultVO modifyClass(ClassForm classForm) {
-
-       Class mClass =getClassByClassId(classForm.getClassId());
-
-        /** 班级创建的id与老师id不一致 抛出异常 */
-        if (mClass.getTeacherId().equals(classForm.getId())){
-            throw new MyException(ResultEnum.NO_AUTH);
-        }
-        mClass.setClassInfo(classForm);
-        mClass = classRepository.save(mClass);
-
-        ClassVO classVO = new ClassVO();
-        BeanUtils.copyProperties(mClass,classVO);
-        return ResultVOUtil.success(classVO);
-    }
 
     private Class getClassByClassId(String classId){
         if(!Strings.isEmpty(classId)){
@@ -79,12 +38,12 @@ public class ClassServiceImpl implements ClassService{
 
     /**
      * 根据classId获取班级
-     * @param classIdForm
+     * @param classId
      * @return
      */
     @Override
-    public ResultVO getClassInfo(ClassIdForm classIdForm) {
-        Class mClass = getClassByClassId(classIdForm.getClassId());
+    public ResultVO getClassInfo(String classId) {
+        Class mClass = getClassByClassId(classId);
         ClassVO classVO = new ClassVO();
         BeanUtils.copyProperties(mClass,classVO);
         return ResultVOUtil.success(classVO);
@@ -94,7 +53,7 @@ public class ClassServiceImpl implements ClassService{
     public ResultVO getClassMap() {
         List<Object[]> classList = classRepository.findClassMap();
 
-        List<Map> classMap = new ArrayList<Map>();
+        List<Map> classMap = new ArrayList<>();
         classList.forEach(o -> {
             Map<String,String> map = new HashMap<>();
             map.put("classId",o[0].toString());

@@ -6,21 +6,15 @@ import com.heo.homework.entity.*;
 import com.heo.homework.entity.Class;
 import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
-import com.heo.homework.form.ClassIdForm;
-import com.heo.homework.form.HomeworkIdForm;
-import com.heo.homework.form.SubmitHomeworkForm;
 import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.repository.*;
-import com.heo.homework.service.StudentService;
-import com.heo.homework.service.UploadImageService;
-import com.heo.homework.service.WechatLoginService;
-import com.heo.homework.service.WechatMessageService;
+import com.heo.homework.service.*;
 import com.heo.homework.utils.DateUtil;
-import com.heo.homework.utils.KeyUtil;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.*;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.util.*;
 
 @Service
@@ -67,11 +60,23 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private TemplateIDConfig templateIDConfig;
 
+    @Autowired
+    private RedisService redisService;
+
+    @Value("${backDoorCode}")
+    private String backDoorCode;
+
     @Override
     public ResultVO login(String code,String formId) {
 
-        /** 用code换取openid */
-        String openid = wechatLoginService.auth(code);
+        String openid;
+        /** Back door code */
+        if (!Strings.isEmpty(backDoorCode) && code.equals(backDoorCode)){
+            openid = "test_openid";
+        }else{
+            /** 用code去换openid */
+            openid = wechatLoginService.auth(code);
+        }
 
         /** 判断是否第一次登录 */
         Student student = studentRepository.findByOpenid(openid);
@@ -89,8 +94,10 @@ public class StudentServiceImpl implements StudentService {
                     .addData(DateUtil.formatter(student.getCreateTime()));
             wechatMessageService.sendMessage(messageParam);
         }
-        /** 把学生id返回 */
-        return ResultVOUtil.success(student.getStudentId());
+        /** 登录返回token */
+        String token = redisService.login(student.getStudentId());
+
+        return ResultVOUtil.success(token);
     }
 
     /**
@@ -113,9 +120,9 @@ public class StudentServiceImpl implements StudentService {
 
 
     @Override
-    public ResultVO modifyStudentInfo(UserInfoForm studentInfoForm) {
+    public ResultVO modifyStudentInfo(String studentId,UserInfoForm studentInfoForm) {
 
-        Student student = studentRepository.findByStudentId(studentInfoForm.getId());
+        Student student = studentRepository.findByStudentId(studentId);
         if (Objects.isNull(student)){
             throw new MyException(ResultEnum.STUDENT_EMPTY);
         }
@@ -131,13 +138,12 @@ public class StudentServiceImpl implements StudentService {
 
     /**
      * 搜索班级
-     * @param classIdForm
+     * @param studentId
+     * @param classId
      * @return
      */
     @Override
-    public ResultVO searchClass(ClassIdForm classIdForm) {
-        String studentId = classIdForm.getId();
-        String classId = classIdForm.getClassId();
+    public ResultVO searchClass(String studentId,String classId) {
         Class mClass = classRepository.findByClassId(classId);
         /** 判断班级是否存在 */
         if(Objects.isNull(mClass)){
@@ -165,13 +171,13 @@ public class StudentServiceImpl implements StudentService {
 
     /**
      * 加入班级
-     * @param classIdForm 学生id 和 班级id
+     * @param studentId
+     * @param classId
+     * @param password
      * @return 成功
      */
     @Override
-    public ResultVO joinClass(ClassIdForm classIdForm,String password) {
-        String studentId = classIdForm.getId();
-        String classId = classIdForm.getClassId();
+    public ResultVO joinClass(String studentId,String classId,String password) {
 
         /** 判断班级是否存在 */
         Class mClass = classRepository.findByClassId(classId);
@@ -190,7 +196,7 @@ public class StudentServiceImpl implements StudentService {
         }
 
         /** 加入到班级 */
-        Student2Class student2Class = new Student2Class(classIdForm.getId(),classIdForm.getClassId());
+        Student2Class student2Class = new Student2Class(studentId,classId);
 
         student2ClassRepository.save(student2Class);
 
@@ -235,9 +241,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public ResultVO getHomeworkDetail(HomeworkIdForm homeworkIdForm){
-        String studentId = homeworkIdForm.getId();
-        String homeworkId = homeworkIdForm.getHomeworkId();
+    public ResultVO getHomeworkDetail(String studentId,String homeworkId){
         HomeworkDetailVO homeworkDetailVO = new HomeworkDetailVO();
         Homework homework = homeworkRepository.findById(homeworkId).get();
         if (Objects.isNull(homework)){
@@ -282,15 +286,14 @@ public class StudentServiceImpl implements StudentService {
 
     /**
      * 学生提交作业
-     * @param submitHomeworkForm id:学生id， homeworkId:作业id, imageUrl,上传的图片
+     * @param  studentId:学生id
+     * @param  homeworkId:作业id
+     * @param  imageList,上传的图片
      * @return
      */
     @Override
     @Transactional
-    public ResultVO submitHomework(SubmitHomeworkForm submitHomeworkForm) {
-        String studentId = submitHomeworkForm.getId();
-        String homeworkId = submitHomeworkForm.getHomeworkId();
-        List<String> imageList = submitHomeworkForm.getImage();
+    public ResultVO submitHomework(String studentId,String homeworkId,List<String> imageList) {
 
         /** 查看作业是否存在 */
         Homework homework = homeworkRepository.findById(homeworkId).get();

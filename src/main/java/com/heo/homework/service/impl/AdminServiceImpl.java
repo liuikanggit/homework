@@ -8,6 +8,7 @@ import com.heo.homework.exception.MyException;
 import com.heo.homework.repository.AdminRepository;
 import com.heo.homework.repository.StudentRepository;
 import com.heo.homework.service.AdminService;
+import com.heo.homework.service.RedisService;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.PageVo;
 import com.heo.homework.vo.ResultVO;
@@ -43,6 +44,9 @@ public class AdminServiceImpl implements AdminService{
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private RedisService redisService;
+
     @Override
     public ResultVO login(String userName, String password) {
 
@@ -56,12 +60,7 @@ public class AdminServiceImpl implements AdminService{
             throw new MyException(ResultEnum.ADMIN_PASSWORD_ERROR);
         }
 
-        // 1.生成token
-        String token = UUID.randomUUID().toString();
-        Integer expire = RedisConstant.EXPIRE;
-
-        // 2.把'token_'+token作为key，用户名作为value存到redis中
-        redisTemplate.opsForValue().set(String.format(RedisConstant.TOKEN_PREFIX, token), admin.getUserName(), expire, TimeUnit.SECONDS);
+        String token = redisService.login(admin.getId()+"");
 
         log.info("管理员 {} 登录", admin.getUserName());
 
@@ -70,7 +69,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public ResultVO logout(String token) {
-        redisTemplate.opsForValue().getOperations().delete(String.format(RedisConstant.TOKEN_PREFIX, token));
+        redisService.logout();
         return ResultVOUtil.success();
     }
 

@@ -4,11 +4,12 @@ import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
 import com.heo.homework.repository.StudentRepository;
 import com.heo.homework.repository.TeacherRepository;
+import com.heo.homework.service.RedisService;
+import com.sun.javafx.binding.StringFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -30,35 +31,78 @@ public class AuthAspect {
     private TeacherRepository teacherRepository;
 
     @Autowired
+    private RedisService redisService;
+
+    @Autowired
     private RedisTemplate redisTemplate;
 
-    @Pointcut("execution(public * com.heo.homework.controller.TeacherController.*(..)) ||" +
-            "execution(public * com.heo.homework.controller.StudentController.*(..))")
-    public void verify(){}
-
-    @Before("verify()")
-    public void doVerify(){
+    /**
+     * 验证学生
+     */
+    @Before("execution(public * com.heo.homework.controller.StudentController.*(..))")
+    public void verifyStudent() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
+        tokenVerify();
+        authVerifyStudent(request);
+        collectionFormId(request);
+    }
 
-        String id = request.getParameter("id");
+    private void authVerifyStudent(HttpServletRequest request) {
 
-        /** 验证id */
-        log.info("id:{}",id);
-        if (Strings.isEmpty(id) || !(studentRepository.findAllStudentId().contains(id) || teacherRepository.findAllTeachrId().contains(id))){
+        String userId = (String) request.getAttribute("userId");
+        if (!studentRepository.existsById(userId)) {
             throw new MyException(ResultEnum.NO_AUTH);
         }
+    }
 
-        /** 收集用户formId */
+    /**
+     * 验证教师
+     */
+    @Before("execution(public * com.heo.homework.controller.TeacherController.*(..))")
+    public void verifyTeacher() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        tokenVerify();
+        authVerifyTeacher(request);
+        collectionFormId(request);
+    }
+
+    private void authVerifyTeacher(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        if (!teacherRepository.existsById(userId)) {
+            throw new MyException(ResultEnum.NO_AUTH);
+        }
+    }
+
+
+    /**
+     * 验证token
+     */
+    private void tokenVerify() {
+
+        /** 验证token是否有效 */
+        if (!redisService.verify()) {
+            throw new MyException(ResultEnum.LOGIN_INVALID);
+        }
+    }
+
+    /**
+     * 采集用户的formId
+     * @param request
+     */
+    private void collectionFormId(HttpServletRequest request) {
         String[] formIdList = request.getParameterValues("formId");
-        if (!Objects.isNull(formIdList) && formIdList.length > 0){
-            log.info("formId:{} length:{}",formIdList,formIdList.length);
-            for (String formId : formIdList){
-                if (Strings.isNotEmpty(formId)){
-                    /** 把formId存入以id为key的redis中 */
+        if (!Objects.isNull(formIdList) && formIdList.length > 0) {
+            String userId = (String) request.getAttribute("userId");
+            String key = StringFormatter.format("formId_%s", userId).toString();
+            log.info("formId:{} length:{}", formIdList, formIdList.length);
+            for (String formId : formIdList) {
+                if (Strings.isNotEmpty(formId)) {
+                    /** 把formId存入以formId_+id为key的redis中 */
                     try {
-                        redisTemplate.opsForList().leftPush(id,formId);
-                    }catch (Exception e){
+                        redisTemplate.opsForList().leftPush(key, formId);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }

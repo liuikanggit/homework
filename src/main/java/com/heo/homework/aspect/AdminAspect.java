@@ -32,7 +32,7 @@ public class AdminAspect {
 
     @Pointcut("execution(public * com.heo.homework.controller.AdminController.*(..)) &&" +
             " !execution(public * com.heo.homework.controller.AdminController.login(..))")
-    public void verify(){};
+    public void verify(){}
 
     @Before("verify()")
     public void doVerify(){

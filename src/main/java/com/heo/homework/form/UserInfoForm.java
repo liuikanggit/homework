@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class UserInfoForm extends LoginIdForm {
+public class UserInfoForm {
 
     @NotEmpty(message = "姓名不能为空")
     private String name;
