@@ -36,7 +36,7 @@ public enum ResultEnum {
     SYSTEM_EXCEPTION(-1,"系统异常"),
     REQUEST_EXCEPTION(-2,"请求异常"),
     NO_AUTH(-3,"无权限操作"),
-    LOGIN_INVALID(-4,"登录过期，请重新登录"),
+    LOGIN_INVALID(-4,"未登录或登录失效，请重新登录"),
 
     MISSING_PARAMETERS(-100,"请求缺少参数"),
     METHOD_NOT_SUPPORTED(-101,"请求方法不支持"),

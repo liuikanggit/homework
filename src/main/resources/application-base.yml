@@ -15,8 +15,8 @@ spring:
       timeout: 10000ms
 
 wechat:
-  appId: wx07c2f70bc511f031
-  secret: 66c79c9d56271af7c71886812df0d306
+  appId: wxaa5ec51c6c3a5d36
+  secret: 67ff806ebb405faff36585e1050eea51
 
 template:
   #作业通知模板

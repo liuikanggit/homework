@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("teacher")
+@RequestMapping("/t")
 public class TeacherController {
 
     private final TeacherService teacherService;

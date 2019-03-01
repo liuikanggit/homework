@@ -85,14 +85,14 @@ public class StudentServiceImpl implements StudentService {
             student = new Student(openid);
             student = studentRepository.save(student);
 
-            /** 推送信息 */
-            MessageParam messageParam = new MessageParam(student.getStudentId(),openid,templateIDConfig.getRegisterNotice(),templateIDConfig.getRegisterPath(),formId)
-                    .addData("注册成功")
-                    .addData(student.getStudentName())
-                    .addData("学生")
-                    .addData("请尽快完善个人资料")
-                    .addData(DateUtil.formatter(student.getCreateTime()));
-            wechatMessageService.sendMessage(messageParam);
+//            /** 推送信息 */
+//            MessageParam messageParam = new MessageParam(student.getStudentId(),openid,templateIDConfig.getRegisterNotice(),templateIDConfig.getRegisterPath(),formId)
+//                    .addData("注册成功")
+//                    .addData(student.getStudentName())
+//                    .addData("学生")
+//                    .addData("请尽快完善个人资料")
+//                    .addData(DateUtil.formatter(student.getCreateTime()));
+//            wechatMessageService.sendMessage(messageParam);
         }
         /** 登录返回token */
         String token = redisService.login(student.getStudentId());
@@ -113,8 +113,8 @@ public class StudentServiceImpl implements StudentService {
             throw new MyException(ResultEnum.STUDENT_EMPTY);
         }
         UserInfoVO userInfoVO = new UserInfoVO(student);
-        if (userInfoVO.isBlank())
-            return ResultVOUtil.success();
+//        if (userInfoVO.isBlank())
+//            return ResultVOUtil.success();
         return ResultVOUtil.success(userInfoVO);
     }
 

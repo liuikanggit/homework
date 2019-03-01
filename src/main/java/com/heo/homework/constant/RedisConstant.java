@@ -9,7 +9,7 @@ public interface RedisConstant {
 
     String TOKEN_PREFIX = "token_%s";
 
-    Integer EXPIRE = 1800; //30分钟
+    Integer EXPIRE = 604800; //7天  7 * 24 * 60 * 60
 
     // header中保存token的字段
     String AUTHORIZATION = "Authorization";
