@@ -1,38 +1,34 @@
 package com.heo.homework.service.impl;
 
-import com.heo.homework.config.TemplateIDConfig;
-import com.heo.homework.dto.MessageParam;
 import com.heo.homework.entity.Class;
-import com.heo.homework.entity.Homework;
 import com.heo.homework.entity.Teacher;
 import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
 import com.heo.homework.form.ClassForm;
-import com.heo.homework.form.HomeworkForm;
 import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.repository.ClassRepository;
-import com.heo.homework.repository.HomeworkRepository;
 import com.heo.homework.repository.TeacherRepository;
+import com.heo.homework.service.RedisService;
 import com.heo.homework.service.TeacherService;
 import com.heo.homework.service.WechatLoginService;
 import com.heo.homework.service.WechatMessageService;
-import com.heo.homework.utils.DateUtil;
 import com.heo.homework.utils.KeyUtil;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ClassVO;
 import com.heo.homework.vo.ResultVO;
 import com.heo.homework.vo.UserInfoVO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
-import java.util.Date;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class TeacherServiceImpl implements TeacherService{
 
     @Autowired
@@ -48,7 +44,11 @@ public class TeacherServiceImpl implements TeacherService{
     private ClassRepository classRepository;
 
     @Autowired
-    private TemplateIDConfig templateIDConfig;
+    private RedisService redisService;
+
+
+    @Value("${backDoorCode}")
+    private String backDoorCode;
 
     @Override
     public ResultVO login(String code,String formId) {
@@ -63,16 +63,56 @@ public class TeacherServiceImpl implements TeacherService{
             teacher = teacherRepository.save(teacher);
 
             /** 推送信息 */
-            MessageParam messageParam = new MessageParam(teacher.getTeacherId(),openid,templateIDConfig.getRegisterNotice(),templateIDConfig.getRegisterPath(),formId)
-                    .addData("注册成功")
-                    .addData(teacher.getTeacherName())
-                    .addData("教师")
-                    .addData("请尽快完善个人资料")
-                    .addData(DateUtil.formatter(teacher.getCreateTime()));
-            wechatMessageService.sendMessage(messageParam);
+//            MessageParam messageParam = new MessageParam(teacher.getTeacherId(),openid,templateIDConfig.getRegisterNotice(),templateIDConfig.getRegisterPath(),formId)
+//                    .addData("注册成功")
+//                    .addData(teacher.getTeacherName())
+//                    .addData("教师")
+//                    .addData("请尽快完善个人资料")
+//                    .addData(DateUtil.formatter(teacher.getCreateTime()));
+//            wechatMessageService.sendMessage(messageParam);
         }
         /** 把教师id返回 */
         return ResultVOUtil.success(teacher.getTeacherId());
+    }
+
+    @Override
+    public ResultVO login(String code, String[] formId, String nickName, String avatarUrl, String gender) {
+        String openid;
+        /** Back door code */
+        if (!Strings.isEmpty(backDoorCode) && code.equals(backDoorCode)){
+            openid = "test_openid";
+        }else{
+            /** 用code去换openid */
+            openid = wechatLoginService.auth(code);
+        }
+
+        /** 判断是否第一次登录 */
+        Teacher teacher = teacherRepository.findByOpenid(openid);
+        if( teacher == null){
+            /** 第一次登录 创建一个学生 */
+            teacher = new Teacher(openid);
+            teacher.setTeacherName(nickName);
+            teacher.setTeacherAvatarUrl(avatarUrl);
+            //性别 0：未知、1：男、2：女
+            if ("0".equals(gender)){
+                teacher.setSex("未填写");
+            }else if ("1".equals(gender)){
+                teacher.setSex("男");
+            }else if ("2".equals("女")){
+                teacher.setSex("女");
+            }
+            teacher = teacherRepository.save(teacher);
+            log.info("有新的教师注册成功了,{}",teacher);
+            if (formId != null){
+                for (String aFormId:formId)
+                    redisService.saveFormId(teacher.getTeacherId(),aFormId);
+            }
+            wechatMessageService.sendRegisterNotice(teacher.getTeacherId(),teacher.getOpenid(),nickName,"学生");
+
+        }
+        /** 登录返回token */
+        String token = redisService.login(teacher.getTeacherId());
+        return ResultVOUtil.success(token);
     }
 
     /**
@@ -141,7 +181,7 @@ public class TeacherServiceImpl implements TeacherService{
 
         Class mClass = classRepository.findByClassId(classId);
         if (Objects.isNull(mClass)){
-            throw new MyException(ResultEnum.CLASS_NOT_EMPTY);
+            throw new MyException(ResultEnum.CLASS_NOT_EXIST);
         }
 
         /** 班级创建的id与老师id不一致 抛出异常 */

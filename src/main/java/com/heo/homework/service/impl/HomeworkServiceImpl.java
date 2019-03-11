@@ -74,18 +74,18 @@ public class HomeworkServiceImpl implements HomeworkService{
             homeworkDetailRepository.save(homeworkDetail);
 
             /** 推送信息给学生 */
-            Student student = studentRepository.findByStudentId(studentId);
-            String teacherName = teacherRepository.getTeacherNameByTeacherId(teacherId);
-            Class mClass = classRepository.findByClassId(homework.getClassId());
-            MessageParam messageParam = new MessageParam(student.getStudentId(),student.getOpenid(), templateIDConfig.getHomeworkNotice(),templateIDConfig.getHomeworkPath())
-                    .addData(student.getStudentName()) //学生姓名
-                    .addData(teacherName)  //发布人
-                    .addData(mClass.getClassName())  //班级名称
-                    .addData(mClass.getClassSubject())  //科目
-                    .addData(homework.getHomeworkDesc())  //作业内容
-                    .addData(DateUtil.formatter(homework.getCreateTime(),"yyyy年MM月dd日"))  //发布时间
-                    .addData(DateUtil.formatter(homework.getEndTime(),"yyyy年MM月dd日")); //完成时间
-            wechatMessageService.sendMessage(messageParam);
+//            Student student = studentRepository.findByStudentId(studentId);
+//            String teacherName = teacherRepository.getTeacherNameByTeacherId(teacherId);
+//            Class mClass = classRepository.findByClassId(homework.getClassId());
+//            MessageParam messageParam = new MessageParam(student.getStudentId(),student.getOpenid(), templateIDConfig.getHomeworkNotice(),templateIDConfig.getHomeworkPath())
+//                    .addData(student.getStudentName()) //学生姓名
+//                    .addData(teacherName)  //发布人
+//                    .addData(mClass.getClassName())  //班级名称
+//                    .addData(mClass.getClassSubject())  //科目
+//                    .addData(homework.getHomeworkDesc())  //作业内容
+//                    .addData(DateUtil.formatter(homework.getCreateTime(),"yyyy年MM月dd日"))  //发布时间
+//                    .addData(DateUtil.formatter(homework.getEndTime(),"yyyy年MM月dd日")); //完成时间
+//            wechatMessageService.sendMessage(messageParam);
 
         }
         return ResultVOUtil.success();

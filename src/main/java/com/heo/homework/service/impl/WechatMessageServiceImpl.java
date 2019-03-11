@@ -2,95 +2,90 @@ package com.heo.homework.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.heo.homework.config.TemplateIDConfig;
 import com.heo.homework.config.WechatAccountConfig;
 import com.heo.homework.dto.MessageParam;
 import com.heo.homework.exception.MyException;
+import com.heo.homework.service.RedisService;
 import com.heo.homework.service.WechatMessageService;
+import com.heo.homework.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-public class WechatMessageServiceImpl implements WechatMessageService{
+public class WechatMessageServiceImpl implements WechatMessageService {
 
     @Autowired
-    private WechatAccountConfig wechatAccountConfig;
+    private TemplateIDConfig templateIDConfig;
 
     @Autowired
-    private RedisTemplate redisTemplate;
-
-    private static final String ACCESS_TOKEN = "access_token";
-    private static final String EXPIRES_IN = "expires_in";
+    private RedisService redisService;
 
     private static final String ERR_CODE = "errcode";
-    private static final String ERR_MSG = "errmsg";
 
-    private static final Type MAP_TYPE = new TypeToken<Map<String,String>>(){}.getType();
+    private static final Type MAP_TYPE = new TypeToken<Map<String, String>>() {
+    }.getType();
 
-    /** 获取access_token */
-    private void getAccessToken(){
-        RestTemplate restTemplate = new RestTemplate();
-        final String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+
-                wechatAccountConfig.getAppId()+
-                "&secret="+
-                wechatAccountConfig.getSecret();
-        String response = restTemplate.getForObject(url,String.class);
-        Map<String,String> result = new Gson().fromJson(response,MAP_TYPE);
-        if (result.get(ERR_CODE)!=null){
-            throw new MyException(Integer.valueOf(result.get(ERR_CODE)) , result.get(ERR_MSG));
-        }else{
-            String accessToken = result.get(ACCESS_TOKEN);
-            int expiresIn = Integer.valueOf(result.get(EXPIRES_IN)) - 60; //默认是7200秒 2小时
-            /** 缓存到redis */
-            redisTemplate.opsForValue().set(ACCESS_TOKEN,accessToken,expiresIn, TimeUnit.SECONDS);
-        }
-    }
-
-    @Override
-    public boolean sendMessage(MessageParam messageParam) {
-        String accessToken = (String) redisTemplate.opsForValue().get(ACCESS_TOKEN);
-        if (Objects.isNull(accessToken) || Strings.isEmpty(accessToken)){
-            log.info("access_token过期重新获取");
-            getAccessToken();
-        }
-        String formId = messageParam.getFormId();
-        if(Strings.isEmpty(formId)){
-            formId = (String) redisTemplate.opsForList().rightPop(messageParam.getId());
-        }
-
-        if (Objects.isNull(formId)){
-            log.error("信息推送失败，formId以及用完,推送结束");
+    private boolean sendMessage(String userId,MessageParam messageParam) {
+        /** 根据用户的id去获取formId */
+        String formId = redisService.getFormId(userId);
+        if (formId == null){
+            log.info("信息推送失败,没有formId");
             return false;
-        }else if (Strings.isEmpty(formId)){
-            log.error("信息推送失败，formId无效,换formId继续");
-            sendMessage(messageParam);
-        }else {
-            messageParam.setFormId(formId);
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + accessToken;
-            String response = restTemplate.postForObject(url, messageParam.toJson(), String.class);
-            Map<String, String> result = new Gson().fromJson(response, MAP_TYPE);
-            int errCode = Integer.valueOf(result.get(ERR_CODE));
-            if (errCode == 0) {
-                log.info("信息推送成功{}", result);
-                return true;
-            } else if (errCode == 41028 || errCode == 41029){
-                log.error("信息推送失败 formId无效,过期，换formId继续", result);
-                return sendMessage(messageParam);
-            }else{
-                log.error("信息推送失败 其他错误.",result);
-            }
+        }
+        messageParam.setFormId(formId);
+        String accessToken = redisService.getAccessToken();
 
+        RestTemplate restTemplate = new RestTemplate();
+        /** 解决body字符集问题 */
+        List<HttpMessageConverter<?>> list = restTemplate.getMessageConverters();
+        for (HttpMessageConverter<?> httpMessageConverter : list) {
+            if(httpMessageConverter instanceof StringHttpMessageConverter) {
+                ((StringHttpMessageConverter) httpMessageConverter).setDefaultCharset(StandardCharsets.UTF_8);
+                break;
+            }
+        }
+        String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=" + accessToken;
+        String response = restTemplate.postForObject(url, messageParam.toJson(), String.class);
+
+        Map<String, String> result = new Gson().fromJson(response, MAP_TYPE);
+        int errCode = Integer.valueOf(result.get(ERR_CODE));
+        if (errCode == 0) {
+            log.info("信息推送成功{}",messageParam.toJson());
+            return true;
+        } else if (errCode == 41028 || errCode == 41029) {
+            log.error("信息推送失败 formId无效,过期，换formId继续", result);
+            return sendMessage(userId,messageParam);
+        } else {
+            log.error("信息推送失败 其他错误.", result);
         }
         return false;
     }
+
+    @Override
+    public boolean sendRegisterNotice(String userId, String openid,String name,String userType) {
+        MessageParam messageParam = new MessageParam(openid, templateIDConfig.getRegisterNotice(), templateIDConfig.getRegisterPath());
+        messageParam.addData(name).addData(userType)
+                .addData("注册后，请尽快完善个人信息")
+                .addData(DateUtil.formatter(new Date(),"yyyy年MM月dd日 hh:mm"))
+                .addData("恭喜成为HEO云作业新的一员！");
+        return sendMessage(userId,messageParam);
+    }
+
 }

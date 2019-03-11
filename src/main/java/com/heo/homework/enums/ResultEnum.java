@@ -12,7 +12,9 @@ public enum ResultEnum {
 
     TEACHER_EMPTY(200,"教师不存在"),
 
-    CLASS_NOT_EMPTY(300,"班级不存在"),
+    USER_NOT_EXIST(210,"用户不存在"),
+
+    CLASS_NOT_EXIST(300,"班级不存在"),
     REPEAT_THE_CLASS(301,"重复加入班级"),
     CLASS_PSW_ERROR(302,"班级密码错误"),
 
@@ -31,6 +33,11 @@ public enum ResultEnum {
     ADMIN_EMPTY(601,"管理员用户不存在"),
     ADMIN_PASSWORD_ERROR(602,"管理员登录密码错误"),
 
+    REPEAT_LIST_POST(700,"重复点赞"),
+    POST_NOT_EXIST(704,"帖子不存在"),
+
+    LIKE_SELF(801,"自己不能给自己点赞"),
+    LIKE_EXCEED_10(802,"每天最多只能点赞10次"),
 
 
     SYSTEM_EXCEPTION(-1,"系统异常"),
@@ -42,6 +49,7 @@ public enum ResultEnum {
     METHOD_NOT_SUPPORTED(-101,"请求方法不支持"),
 
     INVALID_CODE(40029,"code无效")
+
     ;
 
     private Integer code;

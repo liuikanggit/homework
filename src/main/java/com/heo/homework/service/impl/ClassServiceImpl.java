@@ -31,7 +31,7 @@ public class ClassServiceImpl implements ClassService{
         }
         Class mClass = classRepository.findByClassId(classId);
         if (Objects.isNull(mClass)){
-            throw new MyException(ResultEnum.CLASS_NOT_EMPTY);
+            throw new MyException(ResultEnum.CLASS_NOT_EXIST);
         }
         return mClass;
     }

@@ -43,7 +43,10 @@ public class UserInfoVO {
     /** 性别 */
     private String sex;
 
+    private Integer likedNum;
+
     /** 与之关联的班级信息 */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Map<String,String>> classMap;
 
     /** 创建日期时间 */
@@ -57,7 +60,13 @@ public class UserInfoVO {
     public UserInfoVO(){}
 
     public UserInfoVO(Student student){
-        this(student,null);
+        this.nid = student.getStudentNid();
+        this.name = student.getStudentName();
+        this.phone = student.getStudentPhone();
+        this.sex = student.getSex();
+        this.avatarUrl = student.getStudentAvatarUrl();
+        this.createTime = student.getCreateTime();
+        this.updateTime = student.getUpdateTime();
     }
 
     public UserInfoVO(Student student,List<Map<String,String>> classMap){
@@ -90,12 +99,5 @@ public class UserInfoVO {
             userInfoVOS.add(new UserInfoVO(student));
         }
         return userInfoVOS;
-    }
-
-
-
-    @JsonIgnore
-    public boolean isBlank(){
-        return Strings.isBlank(name) && Strings.isBlank(avatarUrl);
     }
 }

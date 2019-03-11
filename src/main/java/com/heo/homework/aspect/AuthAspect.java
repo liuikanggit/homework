@@ -33,9 +33,6 @@ public class AuthAspect {
     @Autowired
     private RedisService redisService;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
-
     /**
      * 验证学生
      */
@@ -75,6 +72,10 @@ public class AuthAspect {
         }
     }
 
+    @Before("execution(public * com.heo.homework.controller.UploadImageController.uploadImage(..))")
+    public void verify(){
+        tokenVerify();
+    }
 
     /**
      * 验证token
@@ -89,23 +90,17 @@ public class AuthAspect {
 
     /**
      * 采集用户的formId
+     *
      * @param request
      */
     private void collectionFormId(HttpServletRequest request) {
         String[] formIdList = request.getParameterValues("formId");
-        if (!Objects.isNull(formIdList) && formIdList.length > 0) {
+        if (!Objects.isNull(formIdList) && formIdList.length > 0 && !formIdList[0].equals("[]")) {
             String userId = (String) request.getAttribute("userId");
             String key = StringFormatter.format("formId_%s", userId).toString();
             log.info("formId:{} length:{}", formIdList, formIdList.length);
             for (String formId : formIdList) {
-                if (Strings.isNotEmpty(formId)) {
-                    /** 把formId存入以formId_+id为key的redis中 */
-                    try {
-                        redisTemplate.opsForList().leftPush(key, formId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                redisService.saveFormId(userId, formId);
             }
         }
     }

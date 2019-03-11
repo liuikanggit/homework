@@ -1,7 +1,10 @@
 package com.heo.homework.controller;
 
+import com.heo.homework.constant.UserType;
 import com.heo.homework.form.UserInfoForm;
+import com.heo.homework.service.PostService;
 import com.heo.homework.service.StudentService;
+import com.heo.homework.service.UserInfoService;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,12 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     /**
      * 获取学生信息
@@ -119,5 +128,43 @@ public class StudentController {
     public ResultVO getAllClassInfo(HttpServletRequest request,@RequestParam int page,@RequestParam int size)  {
         String studentId = (String) request.getAttribute("userId");
         return studentService.getAllClassInfo(studentId,page,size);
+    }
+
+    /**
+     * 创建帖子
+     * @param request
+     * @param title
+     * @param content
+     * @param image
+     * @return
+     */
+    @PostMapping("/post")
+    public ResultVO createPost(HttpServletRequest request,@RequestParam String title,@RequestParam String content,@RequestParam String[] image){
+        String studentId = (String) request.getAttribute("userId");
+        return postService.createPost(studentId,title,content,image);
+    }
+
+    /**
+     * 获取帖子（分页）
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/post")
+    public ResultVO getPost(@RequestParam Integer page,@RequestParam Integer size,HttpServletRequest request){
+        String userId = (String) request.getAttribute("userId");
+        return postService.getAllPost(userId,page,size);
+    }
+
+    @PostMapping("/post/like")
+    public ResultVO likePost(HttpServletRequest request,@RequestParam Integer postId){
+        String userId = (String) request.getAttribute("userId");
+        return postService.likePost(userId, UserType.STUDENT,postId);
+    }
+
+    @PutMapping("/like")
+    public ResultVO likeUser(HttpServletRequest request,@RequestParam String userId){
+        String selfId = (String) request.getAttribute("userId");
+        return userInfoService.like(selfId, userId);
     }
 }

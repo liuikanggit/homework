@@ -1,6 +1,7 @@
 package com.heo.homework.vo;
 
 import lombok.Data;
+import org.springframework.data.domain.Page;
 
 @Data
 public class PageVo<T> {
@@ -19,5 +20,10 @@ public class PageVo<T> {
         this.totalData = totalData;
         this.totalPages = totalPages;
         this.data = data;
+    }
+    public PageVo(Page page){
+        this.totalData = page.getTotalElements();
+        this.totalPages = page.getTotalPages();
+        this.data = (T) page.getContent();
     }
 }

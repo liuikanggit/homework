@@ -12,16 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.*;
 
 @Service
 @Slf4j
-public class UploadImageServcieImpl implements UploadImageService {
+public class UploadImageServiceImpl implements UploadImageService {
 
     @Autowired
     private UploadImageConfig uploadImageConfig;
@@ -44,8 +44,16 @@ public class UploadImageServcieImpl implements UploadImageService {
         String newFilename = "/"+type + "/" + KeyUtil.getUUID() + "." + suffixName;
 
         try {
-            Files.copy(file.getInputStream(), Paths.get(uploadImageConfig.getTempPath(), newFilename));
+            Path p = Paths.get(uploadImageConfig.getTempPath(),"/" + type);
+            if (!Files.exists(p)){
+                Files.createDirectories(p);
+                p = Paths.get(uploadImageConfig.getSavePath(),"/"+ type);
+                Files.createDirectories(p);
+            }
+            Path path = Paths.get(uploadImageConfig.getTempPath(), newFilename);
+            Files.copy(file.getInputStream(), path);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new MyException(ResultEnum.FILE_NULL);
         }
 
@@ -63,7 +71,8 @@ public class UploadImageServcieImpl implements UploadImageService {
         Path path = Paths.get(uploadImageConfig.getTempPath(), imageName);
         if (Files.exists(path)) {
             try {
-                Files.move(path, Paths.get(uploadImageConfig.getSavePath(), imageName), StandardCopyOption.ATOMIC_MOVE);
+                Path p =  Paths.get(uploadImageConfig.getSavePath(), imageName);
+                Files.move(path, p, StandardCopyOption.ATOMIC_MOVE);
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

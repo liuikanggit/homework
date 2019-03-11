@@ -1,10 +1,9 @@
 package com.heo.homework.service;
 
-import com.heo.homework.dto.MessageParam;
-
+/**
+ * 微信注册成功模板
+ */
 public interface WechatMessageService {
 
-    boolean sendMessage(MessageParam messageParam);
-
-
+    boolean sendRegisterNotice(String userId, String openid, String name, String userType);
 }

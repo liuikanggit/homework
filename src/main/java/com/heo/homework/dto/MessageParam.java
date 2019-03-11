@@ -16,9 +16,6 @@ import java.util.Map;
 @Data
 public class MessageParam {
 
-    @JsonIgnore
-    private String id;
-
     @JsonProperty("touser")
     private String openid;
 
@@ -35,16 +32,11 @@ public class MessageParam {
     @JsonIgnore
     private int i = 1;
 
-    public MessageParam(String id,String openid,String templateId,String page){
-        this(id,openid,templateId,page,null);
-    }
 
-    public MessageParam(String id,String openid,String templateId,String page,String formId){
-        this.id = id;
+    public MessageParam(String openid,String templateId,String page){
         this.openid = openid;
         this.templateId = templateId;
         this.page = page;
-        this.formId = formId;
     }
 
     public MessageParam addData(String value){
@@ -66,7 +58,7 @@ public class MessageParam {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            throw new MyException(ResultEnum.SYSTEM_EXCEPTION);
+            return "";
         }
     }
 }

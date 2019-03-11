@@ -13,4 +13,9 @@ public interface RedisConstant {
 
     // header中保存token的字段
     String AUTHORIZATION = "Authorization";
+
+    String FORM_ID_PREFIX = "formId_%s";
+
+
+    String ACCESS_TOKEN = "access_token";
 }

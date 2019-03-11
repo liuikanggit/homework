@@ -21,14 +21,6 @@ public class WechatMessageServiceImplTest {
 
     @Test
     public void sendMessage() {
-        MessageParam messageParam = new MessageParam("1534860953513576645", "oAS8c5JEgJZUP9g0s5-ZgLPDqUcs",templateIDConfig.getHomeworkNotice(),templateIDConfig.getHomeworkPath())
-                .addData("1")
-                .addData("2")
-                .addData("3")
-                .addData("4")
-                .addData("5")
-                .addData("6")
-                .addData("7");
-        wechatMessageService.sendMessage(messageParam);
+
     }
 }

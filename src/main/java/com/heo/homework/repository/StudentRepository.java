@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface StudentRepository extends JpaRepository<Student,String>,JpaSpecificationExecutor<Student> {
     Student findByOpenid(String openid);
+
     Student findByStudentId(String studentId);
 
     @Query(value = "select studentId  from Student")

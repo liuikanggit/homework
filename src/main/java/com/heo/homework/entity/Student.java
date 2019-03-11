@@ -39,6 +39,7 @@ public class Student {
     }
 
     public void setStudentInfo(UserInfoForm studentInfoForm){
+        this.sex = studentInfoForm.getSex();
         this.studentNid = studentInfoForm.getNid();
         this.studentName = studentInfoForm.getName();
         this.studentPhone = studentInfoForm.getPhone();

@@ -22,7 +22,7 @@ public class UploadImageController {
     private UploadImageConfig uploadImageConfig;
 
     @PostMapping("/image")
-    public ResultVO uploadImage(@RequestParam(required = false) MultipartFile file,@RequestParam(required = false,defaultValue = "") String type){
+    public ResultVO uploadImage(@RequestParam MultipartFile file,@RequestParam String type){
 
         /**  avatar,homework */
         for (String dir : uploadImageConfig.getDir()) {

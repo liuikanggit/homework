@@ -11,6 +11,7 @@ public interface TeacherService {
 
     /** 教师登录 */
     ResultVO login(String code,String formId);
+    ResultVO login(String code, String[] formId, String nickName, String avatarUrl, String gender);
 
     /** 获取教师信息 */
     ResultVO getTeacherInfo(String teacherId);
@@ -23,8 +24,6 @@ public interface TeacherService {
 
     /** 修改班级信息 */
     ResultVO modifyClass(String teacherId,String classId,ClassForm classForm);
-
-
 
 
 

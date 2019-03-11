@@ -1,5 +1,6 @@
-package com.heo.homework.service.impl;
+package com.heo.homework.repository;
 
+import com.heo.homework.entity.UserSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,22 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.sql.Date;
+
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-public class UploadImageServcieImplTest {
-
+public class UserSupportRepositoryTest {
 
     @Autowired
-    private UploadImageServiceImpl uploadImageServcie;
+    private UserSupportRepository userSupportRepository;
 
     @Test
-    public void saveImage() {
-        uploadImageServcie.saveImage("avatar/1533977295392817826.png");
-    }
-
-    @Test
-    public void clearImage(){
-        uploadImageServcie.clearImage();
+    public void test(){
+        UserSupport userSupport = userSupportRepository.findTodayUserSupport("1","1");
+        log.info("{}",userSupport);
     }
 }
