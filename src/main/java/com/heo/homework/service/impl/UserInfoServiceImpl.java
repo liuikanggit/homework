@@ -1,5 +1,7 @@
 package com.heo.homework.service.impl;
 
+import com.heo.homework.entity.Student;
+import com.heo.homework.entity.Teacher;
 import com.heo.homework.entity.UserSupport;
 import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
@@ -9,6 +11,7 @@ import com.heo.homework.repository.UserSupportRepository;
 import com.heo.homework.service.UserInfoService;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ResultVO;
+import com.heo.homework.vo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +49,22 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
         userSupport.setNumAdd();
         userSupportRepository.save(userSupport);
-        return ResultVOUtil.success();
+        return ResultVOUtil.success(userSupport.getNum());
+    }
+
+    @Override
+    public ResultVO getUserInfo(String userId) {
+        UserInfoVO userInfoVO = null;
+        if ( studentRepository.existsById(userId)){
+            Student student = studentRepository.getOne(userId);
+            userInfoVO = new UserInfoVO(student);
+        }else if( teacherRepository.existsById(userId)){
+            Teacher teacher = teacherRepository.getOne(userId);
+            userInfoVO = new UserInfoVO(teacher);
+        } else{
+            throw new MyException(ResultEnum.USER_NOT_EXIST);
+        }
+        userInfoVO.setLikedNum(userSupportRepository.getLikeNumByLikedUserId(userId));
+        return ResultVOUtil.success(userInfoVO);
     }
 }

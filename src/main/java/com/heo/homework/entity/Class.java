@@ -23,9 +23,6 @@ public class Class {
     /** 加入密码 */
     private String classPassword = "";
 
-    /** 年级 */
-    private String grade;
-
     /** 科目 */
     private String classSubject;
 
@@ -45,7 +42,7 @@ public class Class {
 
     public void setClassInfo(ClassForm classForm){
         this.className = classForm.getName();
-        this.grade = classForm.getGrade();
+//        this.grade = classForm.getGrade();
         this.classSubject = classForm.getSubject();
         this.classPassword = classForm.getPassword();
         this.classDesc = classForm.getDesc();

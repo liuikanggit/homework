@@ -7,7 +7,9 @@ import com.heo.homework.exception.MyException;
 import com.heo.homework.form.ClassForm;
 import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.repository.ClassRepository;
+import com.heo.homework.repository.Student2ClassRepository;
 import com.heo.homework.repository.TeacherRepository;
+import com.heo.homework.repository.UserSupportRepository;
 import com.heo.homework.service.RedisService;
 import com.heo.homework.service.TeacherService;
 import com.heo.homework.service.WechatLoginService;
@@ -19,7 +21,6 @@ import com.heo.homework.vo.ResultVO;
 import com.heo.homework.vo.UserInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -46,34 +47,16 @@ public class TeacherServiceImpl implements TeacherService{
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private UserSupportRepository userSupportRepository;
+
+    @Autowired
+    private Student2ClassRepository student2ClassRepository;
+
 
     @Value("${backDoorCode}")
     private String backDoorCode;
 
-    @Override
-    public ResultVO login(String code,String formId) {
-
-        String openid = wechatLoginService.auth(code);
-
-        /** 判断是否第一次登录 */
-        Teacher teacher = teacherRepository.findByOpenid(openid);
-        if( teacher == null){
-            /** 第一次登录 创建一个教师 */
-            teacher = new Teacher(openid);
-            teacher = teacherRepository.save(teacher);
-
-            /** 推送信息 */
-//            MessageParam messageParam = new MessageParam(teacher.getTeacherId(),openid,templateIDConfig.getRegisterNotice(),templateIDConfig.getRegisterPath(),formId)
-//                    .addData("注册成功")
-//                    .addData(teacher.getTeacherName())
-//                    .addData("教师")
-//                    .addData("请尽快完善个人资料")
-//                    .addData(DateUtil.formatter(teacher.getCreateTime()));
-//            wechatMessageService.sendMessage(messageParam);
-        }
-        /** 把教师id返回 */
-        return ResultVOUtil.success(teacher.getTeacherId());
-    }
 
     @Override
     public ResultVO login(String code, String[] formId, String nickName, String avatarUrl, String gender) {
@@ -127,6 +110,7 @@ public class TeacherServiceImpl implements TeacherService{
             throw new MyException(ResultEnum.TEACHER_EMPTY);
         }
         UserInfoVO userInfoVO = new UserInfoVO(teacher);
+        userInfoVO.setLikedNum(userSupportRepository.getLikeNumByLikedUserId(teacherId));
         return ResultVOUtil.success(userInfoVO);
     }
 
@@ -163,10 +147,9 @@ public class TeacherServiceImpl implements TeacherService{
         mClass.setClassInfo(classForm);
         mClass.setTeacherId(teacherId);
         mClass.setClassId(KeyUtil.getClassKey(classRepository.findAllClassId()));
-        mClass = classRepository.save(mClass);
-
-        ClassVO classVO = new ClassVO();
-        BeanUtils.copyProperties(mClass,classVO);
+        classRepository.save(mClass);
+        mClass = classRepository.getOne(mClass.getClassId());
+        ClassVO classVO = new ClassVO(mClass,0);
         return ResultVOUtil.success(classVO);
     }
 
@@ -185,15 +168,15 @@ public class TeacherServiceImpl implements TeacherService{
         }
 
         /** 班级创建的id与老师id不一致 抛出异常 */
-        if (mClass.getTeacherId().equals(teacherId)){
+        if (!mClass.getTeacherId().equals(teacherId)){
             throw new MyException(ResultEnum.NO_AUTH);
         }
         mClass.setClassInfo(classForm);
         mClass.setTeacherId(teacherId);
         mClass = classRepository.save(mClass);
 
-        ClassVO classVO = new ClassVO();
-        BeanUtils.copyProperties(mClass,classVO);
+        Integer count = student2ClassRepository.countByClassId(mClass.getClassId());
+        ClassVO classVO = new ClassVO(mClass,count);
         return ResultVOUtil.success(classVO);
     }
 

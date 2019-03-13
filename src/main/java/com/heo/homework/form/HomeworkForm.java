@@ -13,6 +13,8 @@ public class HomeworkForm{
     private String desc;
 
     @NotEmpty(message = "截至日期不能为空")
-    private Date endTime;
+    private String endDate;
+
+    private String[] image;
 
 }

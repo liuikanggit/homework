@@ -8,9 +8,6 @@ import java.util.List;
 public interface StudentService {
 
     /** 学生登录 */
-    ResultVO login(String code,String formId);
-
-    /** 学生登录2 */
     ResultVO login(String code, String[] formId, String nickName, String avatarUrl, String gender);
 
     /** 查看学生资料 */

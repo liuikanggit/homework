@@ -16,24 +16,45 @@ public class Homework {
     @Id
     private String homeworkId;
 
+    /**
+     * 班级id
+     */
     private String classId;
 
+    /**
+     * 作业描述
+     */
     private String homeworkDesc;
 
-    /** 截至时间 */
+    /**
+     * 图片
+     */
+    private String image;
+
+    /**
+     * 截至时间
+     */
     private Date endTime;
 
-    /** 发布时间 */
+    /**
+     * 发布时间
+     */
     private Date createTime;
 
-    /** 修改时间 */
+    /**
+     * 修改时间
+     */
     private Date updateTime;
 
-    public Homework(HomeworkForm homeworkForm,String classId) {
-        homeworkId = KeyUtil.genUniqueKey();
-        classId = classId;
-        homeworkDesc = homeworkForm.getDesc();
-        endTime = homeworkForm.getEndTime();
-        createTime = new Date();
+    public Homework() {
+    }
+
+    public Homework(String classId, String image, Date endTime, String desc) {
+        this.homeworkId = KeyUtil.genUniqueKey();
+        this.classId = classId;
+        this.homeworkDesc = desc;
+        this.endTime = endTime;
+        this.createTime = new Date();
+        this.image = image;
     }
 }

@@ -1,6 +1,5 @@
 package com.heo.homework.vo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -8,7 +7,6 @@ import com.heo.homework.entity.Student;
 import com.heo.homework.entity.Teacher;
 import com.heo.homework.utils.DateSerializer;
 import lombok.Data;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +58,7 @@ public class UserInfoVO {
     public UserInfoVO(){}
 
     public UserInfoVO(Student student){
+        this.id = student.getStudentId();
         this.nid = student.getStudentNid();
         this.name = student.getStudentName();
         this.phone = student.getStudentPhone();

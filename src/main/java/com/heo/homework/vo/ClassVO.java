@@ -1,6 +1,7 @@
 package com.heo.homework.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.heo.homework.utils.DateSerializer;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.Data;
 import com.heo.homework.entity.Class;
 import org.springframework.beans.BeanUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 
 @Data
@@ -18,22 +20,25 @@ public class ClassVO {
 
     /** 加入密码 */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String classPassword;
+    private String password;
 
     /**班级名称 */
-    private String className;
+    @JsonProperty("name")
+    private String name;
 
     /** 老师名称 */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String teacherName;
 
-    /** 班级人数 */
-    private Integer classNumber;
+    /** 创建教师的id */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String teacherId;
 
-    /** 年级 */
-    private String grade;
+    /** 班级里学生人数 */
+    private Integer studentNum;
 
     /** 科目 */
-    private String classSubject;
+    private String subject;
 
     /**  班级头像 */
     private String classAvatarUrl;
@@ -51,14 +56,26 @@ public class ClassVO {
 
     public ClassVO(){}
 
-    public ClassVO(Class mClass,String teacherName,Integer classNumber){
-        BeanUtils.copyProperties(mClass,this);
-        this.teacherName = teacherName;
-        this.classNumber = classNumber;
+    /**
+     * 教师查看自己创建的班级信息
+     * @param clazz
+     */
+    public ClassVO(Class clazz,Integer studentNum){
+        this.classId = clazz.getClassId();
+        this.password = clazz.getClassPassword();
+        this.name = clazz.getClassName();
+        this.subject = clazz.getClassSubject();
+        this.studentNum = studentNum;
+        this.classAvatarUrl = clazz.getClassAvatarUrl();
+        this.classDesc = clazz.getClassDesc();
+        this.createTime = clazz.getCreateTime();
+        this.updateTime = clazz.getUpdateTime();
     }
 
-    public void hidePassword(){
-        this.classPassword = null;
+    public ClassVO(Class mClass,String teacherName,Integer studentNum){
+        BeanUtils.copyProperties(mClass,this);
+        this.teacherName = teacherName;
+        this.studentNum = studentNum;
     }
 
 }

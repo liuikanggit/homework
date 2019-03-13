@@ -29,7 +29,7 @@ public class StudentController {
     private UserInfoService userInfoService;
 
     /**
-     * 获取学生信息
+     * 获取自己信息
      * @param request
      * @return
      */
@@ -38,7 +38,13 @@ public class StudentController {
         String studentId = (String) request.getAttribute("userId");
         return studentService.getStudentInfo(studentId);
     }
-
+    /**
+     * 查看别人信息
+     */
+    @GetMapping("/info/{userId}")
+    public ResultVO getOtherInfo(@PathVariable String userId){
+        return userInfoService.getUserInfo(userId);
+    }
     /**
      * 学生修改自己信息
      * @param studentInfoForm
@@ -156,12 +162,24 @@ public class StudentController {
         return postService.getAllPost(userId,page,size);
     }
 
+    /**
+     * 给帖子点赞
+     * @param request
+     * @param postId
+     * @return
+     */
     @PostMapping("/post/like")
     public ResultVO likePost(HttpServletRequest request,@RequestParam Integer postId){
         String userId = (String) request.getAttribute("userId");
         return postService.likePost(userId, UserType.STUDENT,postId);
     }
 
+    /**
+     * 给用户点赞
+     * @param request
+     * @param userId
+     * @return
+     */
     @PutMapping("/like")
     public ResultVO likeUser(HttpServletRequest request,@RequestParam String userId){
         String selfId = (String) request.getAttribute("userId");

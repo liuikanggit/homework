@@ -57,7 +57,7 @@ public class StudentServiceImpl implements StudentService {
     private RedisService redisService;
 
     @Autowired
-    private PostRepository postRepository;
+    private UserSupportRepository userSupportRepository;
 
     @Autowired
     private WechatMessageService wechatMessageService;
@@ -65,10 +65,6 @@ public class StudentServiceImpl implements StudentService {
     @Value("${backDoorCode}")
     private String backDoorCode;
 
-    @Override
-    public ResultVO login(String code, String formId) {
-        return null;
-    }
 
     @Override
     public ResultVO login(String code, String[] formId, String nickName, String avatarUrl, String gender) {
@@ -124,6 +120,7 @@ public class StudentServiceImpl implements StudentService {
             throw new MyException(ResultEnum.STUDENT_EMPTY);
         }
         UserInfoVO userInfoVO = new UserInfoVO(student);
+        userInfoVO.setLikedNum(userSupportRepository.getLikeNumByLikedUserId(studentId));
         return ResultVOUtil.success(userInfoVO);
     }
 
@@ -351,7 +348,7 @@ public class StudentServiceImpl implements StudentService {
             String teacherName = teacherRepository.getTeacherNameByTeacherId(mClass.getTeacherId());
             Integer classNumber = student2ClassRepository.countByClassId(mClass.getClassId());
             ClassVO classVO = new ClassVO(mClass, teacherName, classNumber);
-            classVO.hidePassword();
+            classVO.setPassword(null);
             classVoList.add(classVO);
         }
         return ResultVOUtil.success(new PageVo<>(page.getTotalPages(), page.getTotalElements(), classVoList));

@@ -10,7 +10,6 @@ import javax.validation.Valid;
 public interface TeacherService {
 
     /** 教师登录 */
-    ResultVO login(String code,String formId);
     ResultVO login(String code, String[] formId, String nickName, String avatarUrl, String gender);
 
     /** 获取教师信息 */

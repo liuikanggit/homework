@@ -4,20 +4,17 @@ import lombok.Data;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Data
 public class ClassForm{
 
     /** 加入密码 */
-    @Max(value = 13,message = "密码太长了")
+    @Size(max = 13,message = "密码太长了")
     private String password = "";
 
     @NotEmpty(message = "班级名称不能为空")
     private String name;
-
-    /** 年级 */
-    @NotEmpty(message = "年级不能为空")
-    private String grade;
 
     /** 科目 */
     @NotEmpty(message = "科目不能为空")

@@ -9,11 +9,13 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * @author 刘康
  * @create 2019-03-11 14:24
- * @desc
+ * @desc 用户点赞dao
  **/
 public interface UserSupportRepository extends CrudRepository<UserSupport,Integer> {
 
     @Query(value = "select us from UserSupport us where us.userId = ?1 and us.likedUserId = ?2 and us.createTime = current_date")
     UserSupport findTodayUserSupport(String userId, String likedUserId);
 
+    @Query(value = "select count(us.num) from UserSupport us where us.likedUserId = ?1")
+    Integer getLikeNumByLikedUserId(String userId);
 }

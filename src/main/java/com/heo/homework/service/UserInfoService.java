@@ -11,4 +11,6 @@ public interface UserInfoService {
 
     ResultVO like(String userId,String likedUserId);
 
+    ResultVO getUserInfo(String userId);
+
 }

@@ -25,4 +25,6 @@ public interface ClassRepository extends JpaRepository<Class,String> {
 
     @Query(value = "select teacherId from Class where classId = ?1")
     String getClassIdByTeacherId(String teacherId);
+
+    List<Class> getAllByTeacherId(String teacherId);
 }
