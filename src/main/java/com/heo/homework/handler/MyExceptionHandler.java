@@ -7,6 +7,7 @@ import com.heo.homework.vo.ResultVO;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,6 +31,10 @@ public class MyExceptionHandler {
         }
         else if(e instanceof HttpRequestMethodNotSupportedException){
             return ResultVOUtil.error(ResultEnum.METHOD_NOT_SUPPORTED,e.getMessage());
+        }
+        else if(e instanceof QueryTimeoutException){
+            log.error("redis连接超时{}",e);
+            return ResultVOUtil.error(ResultEnum.QUERY_TIMEOUT,e.getMessage());
         }
         else {
             log.error("[系统错误{}]", e);

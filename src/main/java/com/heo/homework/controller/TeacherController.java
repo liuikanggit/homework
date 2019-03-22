@@ -117,7 +117,7 @@ public class TeacherController {
     }
 
     /**
-     * 获取所有班级
+     * 获取自己创建的班级
      *
      * @param request
      * @return

@@ -168,9 +168,9 @@ public class StudentServiceImpl implements StudentService {
 
         /** 查看学生是否重复加入班级 */
         if (!Objects.isNull(student2ClassRepository.findByStudentIdAndClassId(studentId, classId))) {
-            classProfileVO.setStatus(1);
+            classProfileVO.setStatus(1);//加入过了
         } else {
-            classProfileVO.setStatus(0);
+            classProfileVO.setStatus(0);//没加入过
         }
         classProfileVO.setJoinNumber(student2ClassRepository.countByClassId(classId));
         return ResultVOUtil.success(classProfileVO);

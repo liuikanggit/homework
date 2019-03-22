@@ -72,6 +72,7 @@ public class AuthAspect {
         }
     }
 
+    /** 验证图片 */
     @Before("execution(public * com.heo.homework.controller.UploadImageController.uploadImage(..))")
     public void verify(){
         tokenVerify();

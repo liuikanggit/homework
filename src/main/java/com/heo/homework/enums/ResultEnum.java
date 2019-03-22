@@ -39,7 +39,6 @@ public enum ResultEnum {
     LIKE_SELF(801,"自己不能给自己点赞"),
     LIKE_EXCEED_10(802,"每天最多只能点赞10次"),
 
-
     SYSTEM_EXCEPTION(-1,"系统异常"),
     REQUEST_EXCEPTION(-2,"请求异常"),
     NO_AUTH(-3,"无权限操作"),
@@ -47,6 +46,8 @@ public enum ResultEnum {
 
     MISSING_PARAMETERS(-100,"请求缺少参数"),
     METHOD_NOT_SUPPORTED(-101,"请求方法不支持"),
+
+    QUERY_TIMEOUT(-102, "redis查询超时"),
 
     INVALID_CODE(40029,"code无效")
 

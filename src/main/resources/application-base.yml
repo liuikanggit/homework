@@ -4,7 +4,7 @@ spring:
     username: root
     password: 123123
     url: jdbc:mysql://203.195.139.64/db_homework?characterEncoding=utf-8&useSSL=false
-#    url: jdbc:mysql://www.liukang666.cn/db_homework?characterEncoding=utf-8&useSSL=false
+    #    url: jdbc:mysql://www.liukang666.cn/db_homework?characterEncoding=utf-8&useSSL=false
     hikari:
       read-only: false
       connection-timeout: 60000
@@ -19,14 +19,17 @@ spring:
   resources:
     static-locations: file:${upload.savePath},file:${upload.tempPath}
   redis:
-      host: www.liukang666.cn
-      port: 6379
-      password: lk15131112...redis_A
-      timeout: 5000
-      jedis:
-        pool:
-          max-idle: 8
-          min-idle: 0
+    #      host: www.liukang666.cn
+    host:  203.195.139.64
+    port: 6379
+    password: lk15131112...redis_A
+    timeout: 5000ms
+    jedis:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
+        max-wait: -1ms
 
 wechat:
   appId: wxaa5ec51c6c3a5d36

@@ -85,6 +85,19 @@ public class StudentController {
     }
 
     /**
+     *  查询自己加入的班级 列表
+     * @param request id
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/class/joined")
+    public ResultVO getAllClassInfo(HttpServletRequest request,@RequestParam int page,@RequestParam int size)  {
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.getAllClassInfo(studentId,page,size);
+    }
+
+    /**
      * 查询学生的所有作业(分页)
      * @param request
      * @param page 第几页
@@ -123,18 +136,7 @@ public class StudentController {
         return studentService.submitHomework(studentId,homeworkId,image);
     }
 
-    /**
-     *  查询自己加入的班级
-     * @param request id
-     * @param page
-     * @param size
-     * @return
-     */
-    @GetMapping("/class/joined")
-    public ResultVO getAllClassInfo(HttpServletRequest request,@RequestParam int page,@RequestParam int size)  {
-        String studentId = (String) request.getAttribute("userId");
-        return studentService.getAllClassInfo(studentId,page,size);
-    }
+
 
     /**
      * 创建帖子

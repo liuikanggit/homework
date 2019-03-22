@@ -42,7 +42,7 @@ public class Class {
 
     public void setClassInfo(ClassForm classForm){
         this.className = classForm.getName();
-//        this.grade = classForm.getGrade();
+        this.classSubject = classForm.getSubject();
         this.classSubject = classForm.getSubject();
         this.classPassword = classForm.getPassword();
         this.classDesc = classForm.getDesc();

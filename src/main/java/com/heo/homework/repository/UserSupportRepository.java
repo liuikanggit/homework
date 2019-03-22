@@ -16,6 +16,6 @@ public interface UserSupportRepository extends CrudRepository<UserSupport,Intege
     @Query(value = "select us from UserSupport us where us.userId = ?1 and us.likedUserId = ?2 and us.createTime = current_date")
     UserSupport findTodayUserSupport(String userId, String likedUserId);
 
-    @Query(value = "select count(us.num) from UserSupport us where us.likedUserId = ?1")
+    @Query(value = "select SUM(us.num) from UserSupport us where us.likedUserId = ?1")
     Integer getLikeNumByLikedUserId(String userId);
 }
