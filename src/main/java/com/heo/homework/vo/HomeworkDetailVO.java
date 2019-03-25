@@ -45,8 +45,10 @@ public class HomeworkDetailVO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String teacherName;
 
-    /** 作业状态 0：未提交  1：待审核 2：通过 3：没通过 */
+    /** 作业状态 0：未提交  1：提交待审核 2：通过 3：没通过 */
     private Integer status;
+
+    private Integer submitNum;
 
     /** 作业提交图片 */
     @JsonInclude(JsonInclude.Include.NON_NULL)

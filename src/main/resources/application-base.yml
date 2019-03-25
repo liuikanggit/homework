@@ -3,8 +3,8 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: 123123
-    url: jdbc:mysql://203.195.139.64/db_homework?characterEncoding=utf-8&useSSL=false
-    #    url: jdbc:mysql://www.liukang666.cn/db_homework?characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://203.195.139.64/db_homework?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
+    #    url: jdbc:mysql://www.liukang666.cn/db_homework?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2b8
     hikari:
       read-only: false
       connection-timeout: 60000

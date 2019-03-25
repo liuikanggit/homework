@@ -143,6 +143,14 @@ public class TeacherController {
         return homeworkService.assignmentHomework(teacherId, classId, image, date, desc);
     }
 
+    @GetMapping("/homework")
+    public ResultVO getHomework(@RequestParam(required = false,defaultValue = "0") int page,
+        @RequestParam(required = false,defaultValue = "50") int size,HttpServletRequest request){
+        String teacherId = (String) request.getAttribute("userId");
+        return homeworkService.getCreateHomework(teacherId,page,size);
+
+    }
+
     /**
      * 给帖子点赞
      *

@@ -7,12 +7,11 @@ import java.util.Date;
 
 public interface HomeworkService {
 
-
-
-
     /** 修改作业 */
     ResultVO modifyHomework(HomeworkForm homeworkForm);
 
     /** 布置作业 */
     ResultVO assignmentHomework(String teacherId, String[] classId, String[] image, Date date, String desc);
+
+    ResultVO getCreateHomework(String teacherId, int page, int size);
 }

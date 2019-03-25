@@ -21,6 +21,8 @@ public class Homework {
      */
     private String classId;
 
+    private String teacherId;
+
     /**
      * 作业描述
      */
@@ -49,7 +51,8 @@ public class Homework {
     public Homework() {
     }
 
-    public Homework(String classId, String image, Date endTime, String desc) {
+    public Homework(String classId,String teacherId, String image, Date endTime, String desc) {
+        this.teacherId = teacherId;
         this.homeworkId = KeyUtil.genUniqueKey();
         this.classId = classId;
         this.homeworkDesc = desc;

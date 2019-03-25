@@ -13,8 +13,12 @@ import com.heo.homework.service.WechatMessageService;
 import com.heo.homework.utils.DateUtil;
 import com.heo.homework.utils.KeyUtil;
 import com.heo.homework.utils.ResultVOUtil;
+import com.heo.homework.vo.HomeworkVO;
+import com.heo.homework.vo.PageVo;
 import com.heo.homework.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,6 +34,8 @@ public class HomeworkServiceImpl implements HomeworkService {
     @Autowired
     private HomeworkRepository homeworkRepository;
 
+    @Autowired
+    private ClassRepository classRepository;
 
     @Autowired
     private HomeworkDetailRepository homeworkDetailRepository;
@@ -38,28 +44,13 @@ public class HomeworkServiceImpl implements HomeworkService {
     private Student2ClassRepository student2ClassRepository;
 
     @Autowired
-    private WechatMessageService wechatMessageService;
-
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private TeacherRepository teacherRepository;
-
-    @Autowired
-    private ClassRepository classRepository;
-
-
-    @Autowired
-    private TemplateIDConfig templateIDConfig;
-
-    @Autowired
     private UploadImageServiceImpl uploadImageService;
+
 
     /**
      * 布置作业
      *
-     * @param homeworkForm 班级id 作业描述 截至日期
+     * @param
      * @return
      */
     @Override
@@ -75,7 +66,7 @@ public class HomeworkServiceImpl implements HomeworkService {
                 imageList += (image);
             }
 
-            Homework homework = new Homework(classId, imageList, date, desc);
+            Homework homework = new Homework(classId, teacherId, imageList, date, desc);
             homeworkRepository.save(homework);
 
             /** 查出班级中所有的学生 */
@@ -89,6 +80,34 @@ public class HomeworkServiceImpl implements HomeworkService {
             }
         }
         return ResultVOUtil.success();
+    }
+
+    @Override
+    public ResultVO getCreateHomework(String teacherId, int page, int size) {
+        Page<Homework> homeworkPage = homeworkRepository.getHomeworkByTeacherIdOrderByEndTime(teacherId, PageRequest.of(page,size));
+
+        PageVo<List<HomeworkVO>> pageVo = new PageVo<>();
+        pageVo.setTotalData(homeworkPage.getTotalElements());
+        pageVo.setTotalPages(homeworkPage.getTotalPages());
+
+        List<HomeworkVO> homeworkVOS = new ArrayList<>();
+        homeworkPage.getContent().forEach(el->{
+            HomeworkVO homeworkVO = new HomeworkVO();
+            homeworkVO.setId(el.getHomeworkId());
+            Class mClass = classRepository.getOne(el.getClassId());
+            homeworkVO.setClassId(mClass.getClassId());
+            homeworkVO.setClassName(mClass.getClassName());
+            homeworkVO.setSubject(mClass.getClassSubject());
+            homeworkVO.setDesc(el.getHomeworkDesc());
+
+            Date now = new Date();
+            homeworkVO.setBeginTime(el.getCreateTime());
+            homeworkVO.setEndTime(el.getEndTime());
+            homeworkVO.setStatus(el.getEndTime().after(now)?1:0); //0 未截至 1截至
+            Integer submitNum = homeworkDetailRepository.countBySubmitNum(el.getHomeworkId(),el.getClassId());
+            homeworkVO.setSubmitNum(submitNum);
+        });
+        return null;
     }
 
     @Override
