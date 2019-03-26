@@ -99,6 +99,7 @@ public class HomeworkServiceImpl implements HomeworkService {
             homeworkVO.setClassName(mClass.getClassName());
             homeworkVO.setSubject(mClass.getClassSubject());
             homeworkVO.setDesc(el.getHomeworkDesc());
+            homeworkVO.setImages(el.getImage());
 
             Date now = new Date();
             homeworkVO.setBeginTime(el.getCreateTime());

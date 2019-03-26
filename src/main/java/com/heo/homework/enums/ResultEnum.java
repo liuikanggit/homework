@@ -49,6 +49,8 @@ public enum ResultEnum {
 
     QUERY_TIMEOUT(-102, "redis查询超时"),
 
+    TIME_PARSE_ERROR(-103, "时间转换出错"),
+
     INVALID_CODE(40029,"code无效")
 
     ;

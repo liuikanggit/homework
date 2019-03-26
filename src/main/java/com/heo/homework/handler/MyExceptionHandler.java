@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.text.ParseException;
+
 @ControllerAdvice
 @Slf4j
 public class MyExceptionHandler {
@@ -35,6 +37,9 @@ public class MyExceptionHandler {
         else if(e instanceof QueryTimeoutException){
             log.error("redis连接超时{}",e);
             return ResultVOUtil.error(ResultEnum.QUERY_TIMEOUT,e.getMessage());
+        }
+        else if(e instanceof ParseException){
+            return ResultVOUtil.error(ResultEnum.TIME_PARSE_ERROR);
         }
         else {
             log.error("[系统错误{}]", e);

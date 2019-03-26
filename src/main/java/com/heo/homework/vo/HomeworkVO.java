@@ -39,6 +39,8 @@ public class HomeworkVO {
 
     private Integer submitNum;
 
+    private String images;
+
     /** 发布时间 */
     @JsonSerialize(using = DateSerializer.class)
     private Date beginTime;

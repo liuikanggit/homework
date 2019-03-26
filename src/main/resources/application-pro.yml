@@ -8,3 +8,5 @@ upload:
 server:
   tomcat:
     basedir: /data/homework/apps/temp
+  port: 8081
+backDoorCode:

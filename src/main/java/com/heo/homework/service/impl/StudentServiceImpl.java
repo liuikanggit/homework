@@ -219,35 +219,37 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public ResultVO getHomework(String studentId, int start, int size) {
-//        List<HomeworkVO> homeworkVOList = new ArrayList<>();
-//
-//        Page<HomeworkDetail> homeworkDetailPage = homeworkDetailRepository.findAllByStudentIdOrderByUpdateTimeDesc(studentId, PageRequest.of(start, size));
-//        List<HomeworkDetail> homeworkDetailList = homeworkDetailPage.getContent();
-//        for (HomeworkDetail homeworkDetail : homeworkDetailList) {
-//            HomeworkVO homeworkVO = new HomeworkVO();
-//
-//            Homework homework = homeworkRepository.findById(homeworkDetail.getHomeworkId()).get();
-//            Class mClass = classRepository.findByClassId(homework.getClassId());
-//            Teacher teacher = teacherRepository.findByTeacherId(mClass.getTeacherId());
-//
-//            homeworkVO.setHomeworkId(homework.getHomeworkId());
-//            homeworkVO.setSubject(mClass.getClassSubject());
-//            homeworkVO.setHomeworkDesc(homework.getHomeworkDesc());
-//            homeworkVO.setTeacherName(teacher.getTeacherName());
-//
-//            Integer homeworkStatus = homeworkDetail.getHomeworkStatus();
-//            homeworkVO.setStatus(homeworkStatus);
-//            if (homeworkStatus > 0) {
-//                homeworkVO.setSubmitTime(homeworkDetail.getSubmitTime());
-//            }
-//
-//            homeworkVO.setBeginTime(homework.getCreateTime());
-//            homeworkVO.setEndTime(homework.getEndTime());
-//
-//            homeworkVOList.add(homeworkVO);
-//        }
-//        return ResultVOUtil.success(new PageVo<>(homeworkDetailPage.getTotalPages(), homeworkDetailPage.getTotalElements(), homeworkVOList));
-        return null;
+        List<HomeworkVO> homeworkVOList = new ArrayList<>();
+
+        Page<HomeworkDetail> homeworkDetailPage = homeworkDetailRepository.findAllByStudentIdOrderByUpdateTimeDesc(studentId, PageRequest.of(start, size));
+        List<HomeworkDetail> homeworkDetailList = homeworkDetailPage.getContent();
+        for (HomeworkDetail homeworkDetail : homeworkDetailList) {
+            HomeworkVO homeworkVO = new HomeworkVO();
+
+            Homework homework = homeworkRepository.findById(homeworkDetail.getHomeworkId()).get();
+            Class mClass = classRepository.findByClassId(homework.getClassId());
+            Teacher teacher = teacherRepository.findByTeacherId(mClass.getTeacherId());
+
+            homeworkVO.setId(homework.getHomeworkId());
+            homeworkVO.setSubject(mClass.getClassSubject());
+            homeworkVO.setDesc(homework.getHomeworkDesc());
+            homeworkVO.setTeacherName(teacher.getTeacherName());
+            Integer submitNum = homeworkDetailRepository.countBySubmitNum(homework.getHomeworkId(),homework.getClassId());
+            homeworkVO.setSubmitNum(submitNum);
+            homeworkVO.setImages(homework.getImage());
+
+            Integer homeworkStatus = homeworkDetail.getHomeworkStatus();
+            homeworkVO.setStatus(homeworkStatus);
+            if (homeworkStatus > 0) {
+                homeworkVO.setSubmitTime(homeworkDetail.getSubmitTime());
+            }
+
+            homeworkVO.setBeginTime(homework.getCreateTime());
+            homeworkVO.setEndTime(homework.getEndTime());
+
+            homeworkVOList.add(homeworkVO);
+        }
+        return ResultVOUtil.success(new PageVo<>(homeworkDetailPage.getTotalPages(), homeworkDetailPage.getTotalElements(), homeworkVOList));
     }
 
     @Override
@@ -280,7 +282,7 @@ public class StudentServiceImpl implements StudentService {
         homeworkDetailVO.setStatus(homeworkDetail.getHomeworkStatus());
         Integer homeworkStatus = homeworkDetail.getHomeworkStatus();
         homeworkDetailVO.setStatus(homeworkStatus);
-        Integer submitNum = homeworkDetailRepository.countBySubmitNum(homeworkId,mClss.getClassId());
+        Integer submitNum = homeworkDetailRepository.countBySubmitNum(homeworkId, mClss.getClassId());
         homeworkDetailVO.setSubmitNum(submitNum);
         if (homeworkStatus > 0) {
             Integer number = homeworkDetail.getSubmitNumber();
