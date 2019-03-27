@@ -144,13 +144,32 @@ public class TeacherController {
         return homeworkService.assignmentHomework(teacherId, classId, image, date, desc);
     }
 
+    /**
+     * 获取自己布置的作业 分页
+     *
+     * @param page
+     * @param size
+     * @param request
+     * @return
+     */
     @GetMapping("/homework")
-    public ResultVO getHomework(@RequestParam(required = false,defaultValue = "0") int page,
-        @RequestParam(required = false,defaultValue = "50") int size,HttpServletRequest request){
+    public ResultVO getHomework(@RequestParam(required = false, defaultValue = "0") int page,
+                                @RequestParam(required = false, defaultValue = "50") int size,
+                                @RequestParam(required = false, defaultValue = "0") int end, HttpServletRequest request) {
         String teacherId = (String) request.getAttribute("userId");
-        return homeworkService.getCreateHomework(teacherId,page,size);
+        if (end > 0) {
+            return homeworkService.getCreateHomeworkEnd(teacherId, page, size);
+        } else {
+            return homeworkService.getCreateHomeworkNotEnd(teacherId, page, size);
+        }
 
     }
+
+//    @GetMapping("/homework/{id}")
+//    public ResultVO getHomeworkDetail(@PathVariable String id,HttpServletRequest request){
+//        String teacherId = (String) request.getAttribute("userId");
+//        return homeworkService.getHomeworkDetail(teacherId,page,size);
+//    }
 
     /**
      * 给帖子点赞

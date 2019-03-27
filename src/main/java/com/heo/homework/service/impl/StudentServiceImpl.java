@@ -272,28 +272,28 @@ public class StudentServiceImpl implements StudentService {
             throw new MyException(ResultEnum.TEACHER_EMPTY);
         }
 
-        homeworkDetailVO.setHomeworkId(homeworkId);
-        homeworkDetailVO.setClassId(mClss.getClassId());
-        homeworkDetailVO.setClassName(mClss.getClassName());
-        homeworkDetailVO.setSubject(mClss.getClassSubject());
-        homeworkDetailVO.setHomeworkDesc(homework.getHomeworkDesc());
-        homeworkDetailVO.setTeacherId(teacher.getTeacherId());
-        homeworkDetailVO.setTeacherName(teacher.getTeacherName());
-        homeworkDetailVO.setStatus(homeworkDetail.getHomeworkStatus());
-        Integer homeworkStatus = homeworkDetail.getHomeworkStatus();
-        homeworkDetailVO.setStatus(homeworkStatus);
-        Integer submitNum = homeworkDetailRepository.countBySubmitNum(homeworkId, mClss.getClassId());
-        homeworkDetailVO.setSubmitNum(submitNum);
-        if (homeworkStatus > 0) {
-            Integer number = homeworkDetail.getSubmitNumber();
-            List<String> imageUrls = homeworkImageRepository.getImageUrlListByHomeworkDetailId(homeworkDetail.getId(), number);
-            if (null != imageUrls) {
-                homeworkDetailVO.setHomeworkImageUrls(imageUrls);
-            }
-            homeworkDetailVO.setSubmitTime(homeworkDetail.getSubmitTime());
-        }
-        homeworkDetailVO.setBeginTime(homework.getCreateTime());
-        homeworkDetailVO.setEndTime(homework.getEndTime());
+//        homeworkDetailVO.setHomeworkId(homeworkId);
+//        homeworkDetailVO.setClassId(mClss.getClassId());
+//        homeworkDetailVO.setClassName(mClss.getClassName());
+//        homeworkDetailVO.setSubject(mClss.getClassSubject());
+//        homeworkDetailVO.setHomeworkDesc(homework.getHomeworkDesc());
+//        homeworkDetailVO.setTeacherId(teacher.getTeacherId());
+//        homeworkDetailVO.setTeacherName(teacher.getTeacherName());
+//        homeworkDetailVO.setStatus(homeworkDetail.getHomeworkStatus());
+//        Integer homeworkStatus = homeworkDetail.getHomeworkStatus();
+//        homeworkDetailVO.setStatus(homeworkStatus);
+//        Integer submitNum = homeworkDetailRepository.countBySubmitNum(homeworkId, mClss.getClassId());
+//        homeworkDetailVO.setSubmitNum(submitNum);
+//        if (homeworkStatus > 0) {
+//            Integer number = homeworkDetail.getSubmitNumber();
+//            List<String> imageUrls = homeworkImageRepository.getImageUrlListByHomeworkDetailId(homeworkDetail.getId(), number);
+//            if (null != imageUrls) {
+//                homeworkDetailVO.setHomeworkImageUrls(imageUrls);
+//            }
+//            homeworkDetailVO.setSubmitTime(homeworkDetail.getSubmitTime());
+//        }
+//        homeworkDetailVO.setBeginTime(homework.getCreateTime());
+//        homeworkDetailVO.setEndTime(homework.getEndTime());
 
         return ResultVOUtil.success(homeworkDetailVO);
     }
