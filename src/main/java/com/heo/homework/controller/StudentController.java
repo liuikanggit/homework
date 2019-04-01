@@ -2,6 +2,7 @@ package com.heo.homework.controller;
 
 import com.heo.homework.constant.UserType;
 import com.heo.homework.form.UserInfoForm;
+import com.heo.homework.service.ClassService;
 import com.heo.homework.service.PostService;
 import com.heo.homework.service.StudentService;
 import com.heo.homework.service.UserInfoService;
@@ -27,6 +28,9 @@ public class StudentController {
 
     @Autowired
     private UserInfoService userInfoService;
+
+    @Autowired
+    private ClassService classService;
 
     /**
      * 获取自己信息
@@ -106,6 +110,12 @@ public class StudentController {
         return studentService.getAllClassInfo(studentId, page, size);
     }
 
+    @GetMapping("/class/user")
+    public ResultVO getClassUserInfo(HttpServletRequest request,@RequestParam String classId){
+        String studentId = (String) request.getAttribute("userId");
+        return classService.getClassUserInfo(classId,studentId);
+    }
+
     /**
      * 查询学生的所有作业(分页)
      *
@@ -120,6 +130,7 @@ public class StudentController {
         String studentId = (String) request.getAttribute("userId");
         return studentService.getHomework(studentId, page, size);
     }
+
 
     /**
      * 获取作业详情

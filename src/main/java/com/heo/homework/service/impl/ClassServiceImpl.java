@@ -3,10 +3,10 @@ package com.heo.homework.service.impl;
 import com.heo.homework.entity.Class;
 import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
-import com.heo.homework.repository.ClassRepository;
-import com.heo.homework.repository.Student2ClassRepository;
+import com.heo.homework.repository.*;
 import com.heo.homework.service.ClassService;
 import com.heo.homework.utils.ResultVOUtil;
+import com.heo.homework.vo.ClassUserInfoVO;
 import com.heo.homework.vo.ClassVO;
 import com.heo.homework.vo.ResultVO;
 import org.apache.logging.log4j.util.Strings;
@@ -23,6 +23,15 @@ public class ClassServiceImpl implements ClassService{
 
     @Autowired
     private Student2ClassRepository student2ClassRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Autowired
+    private HomeworkRepository homeworkRepository;
 
 
     private Class getClassByClassId(String classId){
@@ -74,5 +83,23 @@ public class ClassServiceImpl implements ClassService{
         });
 
         return ResultVOUtil.success(classMap);
+    }
+
+    @Override
+    public ResultVO getClassUserInfo(String classId, String studentId) {
+
+        ClassUserInfoVO classUserInfoVO  = new ClassUserInfoVO();
+        Class clazz = getClassByClassId(classId);
+        classUserInfoVO.setId(classId);
+        classUserInfoVO.setName(clazz.getClassName());
+
+        classUserInfoVO.setEndHomeworkNum(homeworkRepository.countByClassIdEnd(classId));
+        classUserInfoVO.setGoingHomeworkNum(homeworkRepository.countByClassIdNotEnd(classId));
+
+        classUserInfoVO.setStudentNum(student2ClassRepository.countByClassId(classId));
+        classUserInfoVO.setStudents(studentRepository.getUserSimpleByClassId(classId));
+        classUserInfoVO.setTeacher(teacherRepository.getUserSimple(clazz.getTeacherId()));
+
+        return ResultVOUtil.success(classUserInfoVO);
     }
 }

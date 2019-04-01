@@ -39,5 +39,4 @@ public interface StudentService {
 
     ResultVO addStudent(UserInfoForm userInfoForm);
 
-
 }

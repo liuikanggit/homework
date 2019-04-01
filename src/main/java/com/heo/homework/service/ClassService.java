@@ -1,6 +1,5 @@
 package com.heo.homework.service;
 
-import com.heo.homework.form.ClassForm;
 import com.heo.homework.vo.ResultVO;
 
 public interface ClassService {
@@ -13,4 +12,6 @@ public interface ClassService {
 
     /** 获取班级map */
     ResultVO getClassMap();
+
+    ResultVO getClassUserInfo(String classId, String studentId);
 }

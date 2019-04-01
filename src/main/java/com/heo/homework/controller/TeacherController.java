@@ -117,6 +117,11 @@ public class TeacherController {
         return classService.getClassInfo(classId, true);
     }
 
+    @GetMapping("/class/user")
+    public ResultVO getClassUserInfo(HttpServletRequest request,@RequestParam String classId){
+        String teacherId = (String) request.getAttribute("userId");
+        return classService.getClassUserInfo(classId,teacherId);
+    }
     /**
      * 获取自己创建的班级
      *

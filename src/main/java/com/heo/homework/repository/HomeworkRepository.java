@@ -25,8 +25,14 @@ public interface HomeworkRepository extends CrudRepository<Homework,String> {
     @Query(value = "select new com.heo.homework.vo.HomeworkSimpleVO(h.homeworkId,c.className,c.classSubject,h.createTime,h.endTime,true ) " +
             "from Homework h " +
             "left join com.heo.homework.entity.Class c on h.classId = c.classId " +
-            "where c.teacherId = ?1 and h.endTime < current_date  order by h.endTime",
+            "where c.teacherId = ?1 and h.endTime <= current_date  order by h.endTime",
             countQuery = "select count(h.id) from Homework h left join com.heo.homework.entity.Class c on h.classId = c.classId")
     Page<HomeworkSimpleVO> getHomeworkSimpleByTeacherIdEnd(String teacherId,Pageable pageable);
+
+    @Query(value = "select count(h.homeworkId) from Homework h where h.classId = ?1 and h.endTime > current_date")
+    Integer countByClassIdNotEnd(String classId);
+
+    @Query(value = "select count(h.homeworkId) from Homework h where h.classId = ?1 and h.endTime <= current_date")
+    Integer countByClassIdEnd(String classId);
 
 }
