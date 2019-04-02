@@ -1,5 +1,5 @@
 upload:
-  dir: avatar,homework
+  dir: avatar,homework,post
   tempPath: /data/homework/temp
   savePath: /data/homework/save
   expireTime: 1 #图片过期时间 单位天

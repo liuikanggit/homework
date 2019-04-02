@@ -40,13 +40,10 @@ public class RedisServiceImpl implements RedisService {
     public String login(String userId) {
         /** 判断用户的token是否已经存在了 */
         String token = redisTemplate.opsForValue().get(userId);
-        if (token != null) {
-            /** 表明用户之前已经登录过一次了.清除之前的登录状态 */
-            redisTemplate.opsForValue().getOperations().delete(String.format(RedisConstant.TOKEN_PREFIX, token));
+        if (token == null) {
+            /** 生成token  */
+            token = UUID.randomUUID().toString();
         }
-        /** 生成token  */
-        token = UUID.randomUUID().toString();
-
         // 保存token
         saveToken(userId, token);
         return token;
