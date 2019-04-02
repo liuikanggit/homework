@@ -117,21 +117,27 @@ public class TeacherController {
         return classService.getClassInfo(classId, true);
     }
 
-    @GetMapping("/class/user")
-    public ResultVO getClassUserInfo(HttpServletRequest request,@RequestParam String classId){
-        String teacherId = (String) request.getAttribute("userId");
-        return classService.getClassUserInfo(classId,teacherId);
-    }
+
     /**
      * 获取自己创建的班级
      *
-     * @param request
      * @return
      */
     @GetMapping("/class")
     public ResultVO getClassInfo(HttpServletRequest request) {
         String teacherId = (String) request.getAttribute("userId");
         return classService.getClassInfo(teacherId);
+    }
+
+    /**
+     * 获取班级信息和班级中所有的学生信息
+     *
+     * @return
+     */
+    @GetMapping("/class/user")
+    public ResultVO getClassUserInfo(HttpServletRequest request, @RequestParam String classId) {
+        String teacherId = (String) request.getAttribute("userId");
+        return classService.getClassUserInfo(classId, teacherId);
     }
 
     /**
@@ -158,14 +164,14 @@ public class TeacherController {
      * @return
      */
     @GetMapping("/homework")
-    public ResultVO getHomework(@RequestParam(required = false, defaultValue = "0") int page,
+    public ResultVO getHomework(@RequestParam String classId,
+                                @RequestParam(required = false, defaultValue = "0") int page,
                                 @RequestParam(required = false, defaultValue = "50") int size,
                                 @RequestParam(required = false, defaultValue = "0") int end, HttpServletRequest request) {
-        String teacherId = (String) request.getAttribute("userId");
         if (end > 0) {
-            return homeworkService.getCreateHomeworkEnd(teacherId, page, size);
+            return homeworkService.getCreateHomeworkEnd(classId, page, size);
         } else {
-            return homeworkService.getCreateHomeworkNotEnd(teacherId, page, size);
+            return homeworkService.getCreateHomeworkNotEnd(classId, page, size);
         }
 
     }

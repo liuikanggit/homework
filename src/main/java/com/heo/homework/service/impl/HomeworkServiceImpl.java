@@ -37,9 +37,6 @@ public class HomeworkServiceImpl implements HomeworkService {
     private HomeworkRepository homeworkRepository;
 
     @Autowired
-    private ClassRepository classRepository;
-
-    @Autowired
     private HomeworkDetailRepository homeworkDetailRepository;
 
     @Autowired
@@ -85,16 +82,16 @@ public class HomeworkServiceImpl implements HomeworkService {
     }
 
     @Override
-    public ResultVO getCreateHomeworkEnd(String teacherId, int page, int size) {
-        Page<HomeworkSimpleVO> homeworkSimpleVOPage;
-        homeworkSimpleVOPage = homeworkRepository.getHomeworkSimpleByTeacherIdEnd(teacherId, PageRequest.of(page, size));
+    public ResultVO getCreateHomeworkEnd(String classId, int page, int size) {
+        Page<HomeworkSimpleVO> homeworkSimpleVOPage
+                = homeworkRepository.getHomeworkSimpleByClassIdEnd(classId, PageRequest.of(page, size));
         return ResultVOUtil.success(new PageVo(homeworkSimpleVOPage));
     }
 
     @Override
-    public ResultVO getCreateHomeworkNotEnd(String teacherId, int page, int size) {
-        Page<HomeworkSimpleVO> homeworkSimpleVOPage;
-        homeworkSimpleVOPage = homeworkRepository.getHomeworkSimpleByTeacherIdNotEnd(teacherId, PageRequest.of(page, size));
+    public ResultVO getCreateHomeworkNotEnd(String classId, int page, int size) {
+        Page<HomeworkSimpleVO> homeworkSimpleVOPage
+                = homeworkRepository.getHomeworkSimpleByClassIdNotEnd(classId, PageRequest.of(page, size));
         return ResultVOUtil.success(new PageVo(homeworkSimpleVOPage));
     }
 

@@ -11,23 +11,23 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface HomeworkRepository extends CrudRepository<Homework,String> {
+public interface HomeworkRepository extends CrudRepository<Homework, String> {
 
     Page<Homework> getHomeworkByTeacherIdOrderByEndTime(String teacherId, Pageable pageable);
 
     @Query(value = "select new com.heo.homework.vo.HomeworkSimpleVO(h.homeworkId,c.className,c.classSubject,h.createTime,h.endTime,false ) " +
             "from Homework h " +
             "left join com.heo.homework.entity.Class c on h.classId = c.classId " +
-            "where c.teacherId = ?1 and h.endTime > current_date  order by h.endTime",
-    countQuery = "select count(h.id) from Homework h left join com.heo.homework.entity.Class c on h.classId = c.classId")
-    Page<HomeworkSimpleVO> getHomeworkSimpleByTeacherIdNotEnd(String teacherId,Pageable pageable);
+            "where h.classId = ?1 and h.endTime > current_date  order by h.endTime",
+            countQuery = "select count(h.id) from Homework h left join com.heo.homework.entity.Class c on h.classId = c.classId")
+    Page<HomeworkSimpleVO> getHomeworkSimpleByClassIdNotEnd(String teacherId, Pageable pageable);
 
     @Query(value = "select new com.heo.homework.vo.HomeworkSimpleVO(h.homeworkId,c.className,c.classSubject,h.createTime,h.endTime,true ) " +
             "from Homework h " +
             "left join com.heo.homework.entity.Class c on h.classId = c.classId " +
-            "where c.teacherId = ?1 and h.endTime <= current_date  order by h.endTime",
+            "where h.classId = ?1 and h.endTime <= current_date  order by h.endTime",
             countQuery = "select count(h.id) from Homework h left join com.heo.homework.entity.Class c on h.classId = c.classId")
-    Page<HomeworkSimpleVO> getHomeworkSimpleByTeacherIdEnd(String teacherId,Pageable pageable);
+    Page<HomeworkSimpleVO> getHomeworkSimpleByClassIdEnd(String teacherId, Pageable pageable);
 
     @Query(value = "select count(h.homeworkId) from Homework h where h.classId = ?1 and h.endTime > current_date")
     Integer countByClassIdNotEnd(String classId);

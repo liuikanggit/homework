@@ -23,11 +23,11 @@ public class HomeworkServiceImplTest {
 
     @Test
     public void getCreateHomework(){
-        ResultVO<PageVo> createHomework = homeworkService.getCreateHomeworkEnd("1552554739114210831", 0, 5);
-        log.info("{}",createHomework.getData().getTotalData());
+        ResultVO<PageVo> createHomework = homeworkService.getCreateHomeworkEnd("400490", 0, 5);
+        log.info("结束的{}",createHomework.getData());
 
-        ResultVO<PageVo> createHomework2 = homeworkService.getCreateHomeworkNotEnd("1552554739114210831", 0, 5);
-        log.info("{}",createHomework2.getData().getTotalData());
+        ResultVO<PageVo> createHomework2 = homeworkService.getCreateHomeworkNotEnd("400490", 0, 5);
+        log.info("未结束的{}",createHomework2.getData());
 
     }
 

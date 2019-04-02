@@ -13,7 +13,7 @@ public interface HomeworkService {
     /** 布置作业 */
     ResultVO assignmentHomework(String teacherId, String[] classId, String[] image, Date date, String desc);
 
-    ResultVO getCreateHomeworkEnd(String teacherId, int page, int size);
+    ResultVO getCreateHomeworkEnd(String classId, int page, int size);
 
-    ResultVO getCreateHomeworkNotEnd(String teacherId, int page, int size);
+    ResultVO getCreateHomeworkNotEnd(String classId, int page, int size);
 }
