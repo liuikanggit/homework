@@ -13,10 +13,7 @@ import com.heo.homework.service.WechatMessageService;
 import com.heo.homework.utils.DateUtil;
 import com.heo.homework.utils.KeyUtil;
 import com.heo.homework.utils.ResultVOUtil;
-import com.heo.homework.vo.HomeworkSimpleVO;
-import com.heo.homework.vo.HomeworkVO;
-import com.heo.homework.vo.PageVo;
-import com.heo.homework.vo.ResultVO;
+import com.heo.homework.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -93,6 +90,14 @@ public class HomeworkServiceImpl implements HomeworkService {
         Page<HomeworkSimpleVO> homeworkSimpleVOPage
                 = homeworkRepository.getHomeworkSimpleByClassIdNotEnd(classId, PageRequest.of(page, size));
         return ResultVOUtil.success(new PageVo(homeworkSimpleVOPage));
+    }
+
+    @Override
+    public ResultVO getHomeworkDetail(String homeworkId) {
+        HomeworkDetailVO homeworkDetailVOBy = homeworkRepository.findHomeworkDetailVOBy(homeworkId);
+        homeworkDetailVOBy.setUnCorrectStudent(homeworkDetailRepository.getUserSimpleVOByHomeworkStatusIsSubmit(homeworkId));
+        homeworkDetailVOBy.setCorrectStudent(homeworkDetailRepository.getUserSimpleVOByHomeworkStatusIsOver(homeworkId));
+        return ResultVOUtil.success(homeworkDetailVOBy);
     }
 
     @Override

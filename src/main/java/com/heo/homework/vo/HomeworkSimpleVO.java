@@ -28,6 +28,8 @@ public class HomeworkSimpleVO {
      */
     private String subject;
 
+    private String desc;
+
     /**
      * 开始日期
      */
@@ -43,10 +45,11 @@ public class HomeworkSimpleVO {
      */
     private boolean isEnd;
 
-    public HomeworkSimpleVO(String id, String className, String subject, Date startDate, Date endDate, boolean isEnd) {
+    public HomeworkSimpleVO(String id, String className, String subject,String desc, Date startDate, Date endDate, boolean isEnd) {
         this.id = id;
         this.className = className;
         this.subject = subject;
+        this.desc = desc;
         this.startDate = DateUtil.formatter(startDate, "yyyy-MM-dd hh:mm");
         this.endDate = DateUtil.formatter(endDate, "yyyy-MM-dd hh:mm");
         this.isEnd = isEnd;

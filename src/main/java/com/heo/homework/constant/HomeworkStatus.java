@@ -14,7 +14,7 @@ public interface HomeworkStatus {
     Integer TO_SUBMIT = 0;
 
     /**
-     * 1：待审核
+     * 1：待批改
      */
     Integer TO_CHECK = 1;
 
@@ -22,10 +22,5 @@ public interface HomeworkStatus {
      * 2：通过
      */
     Integer PASS = 2;
-
-    /**
-     * 3：没通过
-     */
-    Integer NO_PASS = 3;
 
 }

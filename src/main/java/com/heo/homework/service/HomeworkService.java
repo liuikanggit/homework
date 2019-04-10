@@ -16,4 +16,6 @@ public interface HomeworkService {
     ResultVO getCreateHomeworkEnd(String classId, int page, int size);
 
     ResultVO getCreateHomeworkNotEnd(String classId, int page, int size);
+
+    ResultVO getHomeworkDetail(String homeworkId);
 }

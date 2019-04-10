@@ -6,6 +6,7 @@ import com.heo.homework.config.TemplateIDConfig;
 import com.heo.homework.config.WechatAccountConfig;
 import com.heo.homework.dto.MessageParam;
 import com.heo.homework.exception.MyException;
+import com.heo.homework.repository.StudentRepository;
 import com.heo.homework.service.RedisService;
 import com.heo.homework.service.WechatMessageService;
 import com.heo.homework.utils.DateUtil;
@@ -36,6 +37,7 @@ public class WechatMessageServiceImpl implements WechatMessageService {
 
     @Autowired
     private RedisService redisService;
+
 
     private static final String ERR_CODE = "errcode";
 

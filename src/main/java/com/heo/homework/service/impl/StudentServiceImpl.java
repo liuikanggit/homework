@@ -2,6 +2,7 @@ package com.heo.homework.service.impl;
 
 import com.heo.homework.entity.*;
 import com.heo.homework.entity.Class;
+import com.heo.homework.entity.HomeworkDetail;
 import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
 import com.heo.homework.form.UserInfoForm;
@@ -254,23 +255,23 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public ResultVO getHomeworkDetail(String studentId, String homeworkId) {
-        HomeworkDetailVO homeworkDetailVO = new HomeworkDetailVO();
-        Homework homework = homeworkRepository.findById(homeworkId).get();
-        if (Objects.isNull(homework)) {
-            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
-        }
-        HomeworkDetail homeworkDetail = homeworkDetailRepository.findByStudentIdAndHomeworkId(studentId, homeworkId);
-        if (Objects.isNull(homeworkDetail)) {
-            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
-        }
-        Class mClss = classRepository.findByClassId(homework.getClassId());
-        if (Objects.isNull(homeworkDetail)) {
-            throw new MyException(ResultEnum.CLASS_NOT_EXIST);
-        }
-        Teacher teacher = teacherRepository.findByTeacherId(mClss.getTeacherId());
-        if (Objects.isNull(homeworkDetail)) {
-            throw new MyException(ResultEnum.TEACHER_EMPTY);
-        }
+//        HomeworkDetailVO homeworkDetailVO = new HomeworkDetailVO();
+//        Homework homework = homeworkRepository.findById(homeworkId).get();
+//        if (Objects.isNull(homework)) {
+//            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
+//        }
+//        HomeworkDetailVO homeworkDetail = homeworkDetailRepository.findByStudentIdAndHomeworkId(studentId, homeworkId);
+//        if (Objects.isNull(homeworkDetail)) {
+//            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
+//        }
+//        Class mClass = classRepository.findByClassId(homework.getClassId());
+//        if (Objects.isNull(homeworkDetail)) {
+//            throw new MyException(ResultEnum.CLASS_NOT_EXIST);
+//        }
+//        Teacher teacher = teacherRepository.findByTeacherId(mClass.getTeacherId());
+//        if (Objects.isNull(homeworkDetail)) {
+//            throw new MyException(ResultEnum.TEACHER_EMPTY);
+//        }
 
 //        homeworkDetailVO.setHomeworkId(homeworkId);
 //        homeworkDetailVO.setClassId(mClss.getClassId());
@@ -295,7 +296,7 @@ public class StudentServiceImpl implements StudentService {
 //        homeworkDetailVO.setBeginTime(homework.getCreateTime());
 //        homeworkDetailVO.setEndTime(homework.getEndTime());
 
-        return ResultVOUtil.success(homeworkDetailVO);
+        return ResultVOUtil.success(null);
     }
 
     /**

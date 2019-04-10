@@ -176,11 +176,10 @@ public class TeacherController {
 
     }
 
-//    @GetMapping("/homework/{id}")
-//    public ResultVO getHomeworkDetail(@PathVariable String id,HttpServletRequest request){
-//        String teacherId = (String) request.getAttribute("userId");
-//        return homeworkService.getHomeworkDetail(teacherId,page,size);
-//    }
+    @GetMapping("/homework/{id}")
+    public ResultVO getHomeworkDetail(@PathVariable String id){
+        return homeworkService.getHomeworkDetail(id);
+    }
 
     /**
      * 给帖子点赞
