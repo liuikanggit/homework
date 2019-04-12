@@ -94,6 +94,12 @@ public class StudentController {
         return studentService.joinClass(studentId, classId, password);
     }
 
+    @DeleteMapping(value = "/class")
+    public ResultVO exitClass(@RequestParam String classId, @RequestParam(required = false, defaultValue = "") String password, HttpServletRequest request) {
+        String studentId = (String) request.getAttribute("userId");
+        return studentService.exitClass(studentId, classId);
+    }
+
     /**
      * 查询自己加入的班级 列表
      *
@@ -157,6 +163,9 @@ public class StudentController {
     @PostMapping("/homework")
     public ResultVO submitHomework(@RequestParam String homeworkId, @RequestParam List<String> image, HttpServletRequest request) {
         String studentId = (String) request.getAttribute("userId");
+        if (image.size() == 0){
+            return ResultVOUtil.error(1,"错误");
+        }
         return studentService.submitHomework(studentId, homeworkId, image);
     }
 

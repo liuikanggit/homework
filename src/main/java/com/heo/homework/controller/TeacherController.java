@@ -1,7 +1,6 @@
 package com.heo.homework.controller;
 
 import com.heo.homework.constant.UserType;
-import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.form.*;
 import com.heo.homework.service.*;
 import com.heo.homework.utils.DateUtil;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import java.util.Date;
 
 @RestController
@@ -179,6 +177,16 @@ public class TeacherController {
     @GetMapping("/homework/{id}")
     public ResultVO getHomeworkDetail(@PathVariable String id){
         return homeworkService.getHomeworkDetail(id);
+    }
+
+    @GetMapping("/homework/image")
+    public ResultVO getHomeworkDetail(@RequestParam String homeworkId,@RequestParam String userId){
+        return homeworkService.getHomeworkImage(homeworkId,userId);
+    }
+
+    @PostMapping("/homework/image")
+    public ResultVO get(@RequestParam String homeworkId,@RequestParam String userId,@RequestParam Integer score,@RequestParam String comment,String[] images){
+        return homeworkService.correctionHomeworkImage(homeworkId,userId,score,comment,images);
     }
 
     /**

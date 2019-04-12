@@ -39,4 +39,5 @@ public interface StudentService {
 
     ResultVO addStudent(UserInfoForm userInfoForm);
 
+    ResultVO exitClass(String studentId, String classId);
 }

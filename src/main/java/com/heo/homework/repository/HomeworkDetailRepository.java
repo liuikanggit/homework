@@ -30,4 +30,6 @@ public interface HomeworkDetailRepository extends CrudRepository<HomeworkDetail,
             "left join HomeworkDetail hd on hd.studentId = s.studentId " +
             "where hd.homeworkStatus = 2 and hd.homeworkId = ?1")
     List<UserSimpleVO> getUserSimpleVOByHomeworkStatusIsOver(String homeworkId);
+
+    HomeworkDetail getByHomeworkIdAndStudentId(String hId,String sId);
 }

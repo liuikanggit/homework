@@ -8,6 +8,7 @@ import com.heo.homework.exception.MyException;
 import com.heo.homework.form.UserInfoForm;
 import com.heo.homework.repository.*;
 import com.heo.homework.service.*;
+import com.heo.homework.utils.DateUtil;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -213,7 +214,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     /**
-     * 查看学生所有的作业
+     * 学生查看所有的作业
      *
      * @param studentId 学生id
      * @return 作业信息
@@ -235,7 +236,7 @@ public class StudentServiceImpl implements StudentService {
             homeworkVO.setSubject(mClass.getClassSubject());
             homeworkVO.setDesc(homework.getHomeworkDesc());
             homeworkVO.setTeacherName(teacher.getTeacherName());
-            Integer submitNum = homeworkDetailRepository.countBySubmitNum(homework.getHomeworkId(),homework.getClassId());
+            Integer submitNum = homeworkDetailRepository.countBySubmitNum(homework.getHomeworkId(), homework.getClassId());
             homeworkVO.setSubmitNum(submitNum);
             homeworkVO.setImages(homework.getImage());
 
@@ -255,48 +256,32 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public ResultVO getHomeworkDetail(String studentId, String homeworkId) {
-//        HomeworkDetailVO homeworkDetailVO = new HomeworkDetailVO();
-//        Homework homework = homeworkRepository.findById(homeworkId).get();
-//        if (Objects.isNull(homework)) {
-//            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
-//        }
-//        HomeworkDetailVO homeworkDetail = homeworkDetailRepository.findByStudentIdAndHomeworkId(studentId, homeworkId);
-//        if (Objects.isNull(homeworkDetail)) {
-//            throw new MyException(ResultEnum.HOMEWORK_EMPTY);
-//        }
-//        Class mClass = classRepository.findByClassId(homework.getClassId());
-//        if (Objects.isNull(homeworkDetail)) {
-//            throw new MyException(ResultEnum.CLASS_NOT_EXIST);
-//        }
-//        Teacher teacher = teacherRepository.findByTeacherId(mClass.getTeacherId());
-//        if (Objects.isNull(homeworkDetail)) {
-//            throw new MyException(ResultEnum.TEACHER_EMPTY);
-//        }
+        Homework homework = homeworkRepository.getByHomeworkId(homeworkId);
+        HomeworkDetail homeworkDetail = homeworkDetailRepository.getByHomeworkIdAndStudentId(homeworkId, studentId);
+        int status = homeworkDetail.getHomeworkStatus();
+        if (status == -1) {
+            status = 0;
+            homeworkDetail.setHomeworkStatus(status);
+            homeworkDetailRepository.save(homeworkDetail);
+        }
+        HomeworkDetailSVO hs = new HomeworkDetailSVO();
+        hs.setDesc(homework.getHomeworkDesc());
+        hs.setImages(Arrays.asList(homework.getImage().split(",")));
+        hs.setState(status);
+        hs.setCreateTime(DateUtil.formatter(homework.getCreateTime(), "MM月dd日 hh:mm"));
+        hs.setEndTime(DateUtil.formatter(homework.getEndTime(), "MM/dd hh:mm"));
 
-//        homeworkDetailVO.setHomeworkId(homeworkId);
-//        homeworkDetailVO.setClassId(mClss.getClassId());
-//        homeworkDetailVO.setClassName(mClss.getClassName());
-//        homeworkDetailVO.setSubject(mClss.getClassSubject());
-//        homeworkDetailVO.setHomeworkDesc(homework.getHomeworkDesc());
-//        homeworkDetailVO.setTeacherId(teacher.getTeacherId());
-//        homeworkDetailVO.setTeacherName(teacher.getTeacherName());
-//        homeworkDetailVO.setStatus(homeworkDetail.getHomeworkStatus());
-//        Integer homeworkStatus = homeworkDetail.getHomeworkStatus();
-//        homeworkDetailVO.setStatus(homeworkStatus);
-//        Integer submitNum = homeworkDetailRepository.countBySubmitNum(homeworkId, mClss.getClassId());
-//        homeworkDetailVO.setSubmitNum(submitNum);
-//        if (homeworkStatus > 0) {
-//            Integer number = homeworkDetail.getSubmitNumber();
-//            List<String> imageUrls = homeworkImageRepository.getImageUrlListByHomeworkDetailId(homeworkDetail.getId(), number);
-//            if (null != imageUrls) {
-//                homeworkDetailVO.setHomeworkImageUrls(imageUrls);
-//            }
-//            homeworkDetailVO.setSubmitTime(homeworkDetail.getSubmitTime());
-//        }
-//        homeworkDetailVO.setBeginTime(homework.getCreateTime());
-//        homeworkDetailVO.setEndTime(homework.getEndTime());
-
-        return ResultVOUtil.success(null);
+        if (status >= 1) {
+            hs.setSubmitTime(DateUtil.formatter(homeworkDetail.getSubmitTime(), "MM/dd hh:mm"));
+            hs.setSubmitImages(homeworkImageRepository.getImageUrlListByHomeworkDetailId(homeworkDetail.getId(), homeworkDetail.getSubmitNumber()));
+        }
+        if (status >= 2) {
+            hs.setCheckTime(DateUtil.formatter(homeworkDetail.getCheckTime(), "MM/dd hh:mm"));
+            hs.setScore(homeworkDetail.getScore());
+            hs.setComment(homeworkDetail.getComment());
+            hs.setCorrectionImages(homeworkImageRepository.getImageUrlListByHomeworkDetailId2(homeworkDetail.getId(), homeworkDetail.getSubmitNumber()));
+        }
+        return ResultVOUtil.success(hs);
     }
 
     /**
@@ -312,7 +297,7 @@ public class StudentServiceImpl implements StudentService {
     public ResultVO submitHomework(String studentId, String homeworkId, List<String> imageList) {
 
         /** 查看作业是否存在 */
-        Homework homework = homeworkRepository.findById(homeworkId).get();
+        Homework homework = homeworkRepository.getByHomeworkId(homeworkId);
         if (Objects.isNull(homework)) {
             throw new MyException(ResultEnum.HOMEWORK_EMPTY);
         }
@@ -412,6 +397,20 @@ public class StudentServiceImpl implements StudentService {
         Student student = new Student("openid");
         student.setStudentInfo(userInfoForm);
         studentRepository.save(student);
+        return ResultVOUtil.success();
+    }
+
+    @Override
+    public ResultVO exitClass(String studentId, String classId) {
+        /** 判断班级是否存在 */
+        Class mClass = classRepository.findByClassId(classId);
+        if (Objects.isNull(mClass)) {
+            throw new MyException(ResultEnum.CLASS_NOT_EXIST);
+        }
+        Student2Class byStudentIdAndClassId = student2ClassRepository.findByStudentIdAndClassId(studentId, classId);
+        if (!Objects.isNull(byStudentIdAndClassId)) {
+            student2ClassRepository.delete(byStudentIdAndClassId);
+        }
         return ResultVOUtil.success();
     }
 

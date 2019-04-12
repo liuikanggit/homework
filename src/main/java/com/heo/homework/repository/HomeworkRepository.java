@@ -15,6 +15,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HomeworkRepository extends CrudRepository<Homework, String> {
 
+    Homework getByHomeworkId(String homeworkId);
+
     Page<Homework> getHomeworkByTeacherIdOrderByEndTime(String teacherId, Pageable pageable);
 
     @Query(value = "select new com.heo.homework.vo.HomeworkSimpleVO(h.homeworkId,c.className,c.classSubject,h.homeworkDesc,h.createTime,h.endTime,false ) " +

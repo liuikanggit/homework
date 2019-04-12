@@ -73,9 +73,17 @@ public class ClassVO {
     }
 
     public ClassVO(Class mClass,String teacherName,Integer studentNum){
-        BeanUtils.copyProperties(mClass,this);
+        this.classId = mClass.getClassId();
+        this.password = mClass.getClassPassword();
+        this.teacherId = mClass.getTeacherId();
+        this.name = mClass.getClassName();
+        this.subject = mClass.getClassSubject();
         this.teacherName = teacherName;
+        this.classAvatarUrl = mClass.getClassAvatarUrl();
         this.studentNum = studentNum;
+        this.classDesc = mClass.getClassDesc();
+        this.createTime = mClass.getCreateTime();
+        this.updateTime = mClass.getUpdateTime();
     }
 
 }

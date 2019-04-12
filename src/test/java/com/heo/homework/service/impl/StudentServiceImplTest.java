@@ -29,4 +29,12 @@ public class StudentServiceImplTest {
         log.info("result:{}",resultVO);
         Assert.assertEquals(resultVO.getCode(),new Integer(0));
     }
+
+    @Test
+    public void getHomeworkDetail(){
+        ResultVO result = studentService.getHomeworkDetail("1551528072478514591", "1555054266029228281");
+        Assert.assertEquals(result.getCode(),new Integer(0));
+        log.info("{}",result.getData());
+
+    }
 }

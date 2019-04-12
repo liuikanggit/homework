@@ -18,4 +18,9 @@ public interface HomeworkService {
     ResultVO getCreateHomeworkNotEnd(String classId, int page, int size);
 
     ResultVO getHomeworkDetail(String homeworkId);
+
+    ResultVO getHomeworkImage(String homeworkId, String userId);
+
+    /** 批改作业 */
+    ResultVO correctionHomeworkImage(String homeworkId,String userId,Integer score,String comment,String[] images);
 }

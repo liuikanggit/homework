@@ -25,6 +25,8 @@ public class HomeworkImage {
 
     private Integer del = DelStatus.NOT_DEL;
 
+    private Integer correction;
+
     private Date createTime;
 
     private Date updateTime;

@@ -1,6 +1,7 @@
 package com.heo.homework.service.impl;
 
 import com.heo.homework.config.TemplateIDConfig;
+import com.heo.homework.constant.HomeworkStatus;
 import com.heo.homework.dto.MessageParam;
 import com.heo.homework.entity.*;
 import com.heo.homework.entity.Class;
@@ -22,10 +23,8 @@ import org.springframework.stereotype.Service;
 import javax.rmi.CORBA.Util;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class HomeworkServiceImpl implements HomeworkService {
@@ -35,6 +34,9 @@ public class HomeworkServiceImpl implements HomeworkService {
 
     @Autowired
     private HomeworkDetailRepository homeworkDetailRepository;
+
+    @Autowired
+    private HomeworkImageRepository homeworkImageRepository;
 
     @Autowired
     private Student2ClassRepository student2ClassRepository;
@@ -98,6 +100,35 @@ public class HomeworkServiceImpl implements HomeworkService {
         homeworkDetailVOBy.setUnCorrectStudent(homeworkDetailRepository.getUserSimpleVOByHomeworkStatusIsSubmit(homeworkId));
         homeworkDetailVOBy.setCorrectStudent(homeworkDetailRepository.getUserSimpleVOByHomeworkStatusIsOver(homeworkId));
         return ResultVOUtil.success(homeworkDetailVOBy);
+    }
+
+    @Override
+    public ResultVO getHomeworkImage(String homeworkId, String studentId) {
+        HomeworkDetail homeworkDetail = homeworkDetailRepository.getByHomeworkIdAndStudentId(homeworkId, studentId);
+        List<String> image = homeworkImageRepository.getImageUrlListByHomeworkDetailId(homeworkDetail.getId(), homeworkDetail.getSubmitNumber());
+        return ResultVOUtil.success(image);
+    }
+
+    @Override
+    @Transactional
+    public ResultVO correctionHomeworkImage(String homeworkId, String userId, Integer score, String comment, String[] images) {
+        HomeworkDetail homeworkDetail = homeworkDetailRepository.getByHomeworkIdAndStudentId(homeworkId, userId);
+        homeworkDetail.setCheckTime(new Date());
+        homeworkDetail.setHomeworkStatus(HomeworkStatus.PASS);
+        homeworkDetail.setScore(score);
+        homeworkDetail.setComment(comment);
+        homeworkDetailRepository.save(homeworkDetail);
+        List<HomeworkImage> homeworkImages =  Arrays.stream(images).map(image ->{
+            uploadImageService.saveImage(image);
+            HomeworkImage homeworkImage = new HomeworkImage();
+            homeworkImage.setHomeworkId(homeworkDetail.getId());
+            homeworkImage.setImageUrl(image);
+            homeworkImage.setNumber(homeworkDetail.getSubmitNumber());
+            homeworkImage.setCorrection(1);
+            return homeworkImage;
+        }).collect(Collectors.toList());
+        homeworkImageRepository.saveAll(homeworkImages);
+        return ResultVOUtil.success();
     }
 
     @Override
