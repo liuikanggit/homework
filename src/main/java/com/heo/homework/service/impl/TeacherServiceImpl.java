@@ -81,7 +81,7 @@ public class TeacherServiceImpl implements TeacherService{
                 teacher.setSex("未填写");
             }else if ("1".equals(gender)){
                 teacher.setSex("男");
-            }else if ("2".equals("女")){
+            }else if ("2".equals(gender)){
                 teacher.setSex("女");
             }
             teacher = teacherRepository.save(teacher);
