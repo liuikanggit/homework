@@ -72,9 +72,11 @@ public class AuthAspect {
         }
     }
 
-    /** 验证图片 */
+    /**
+     * 验证图片
+     */
     @Before("execution(public * com.heo.homework.controller.UploadImageController.uploadImage(..))")
-    public void verify(){
+    public void verify() {
         tokenVerify();
     }
 
@@ -98,12 +100,17 @@ public class AuthAspect {
         String[] formIdList = request.getParameterValues("formId");
         if (!Objects.isNull(formIdList) && formIdList.length > 0 && !formIdList[0].equals("[]")) {
             String userId = (String) request.getAttribute("userId");
-            String key = StringFormatter.format("formId_%s", userId).toString();
             log.info("formId:{} length:{}", formIdList, formIdList.length);
             for (String formId : formIdList) {
-                redisService.saveFormId(userId, formId);
+                log.info("formId:{}", formId);
+//                3f54480addeb4759ab5c1fcf968d5798
+                if (formId.matches("\\w{32}")) {
+                    redisService.saveFormId(userId, formId);
+                }
             }
         }
     }
 
 }
+
+

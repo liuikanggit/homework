@@ -1,6 +1,5 @@
 package com.heo.homework.repository;
 
-import com.heo.homework.entity.UserSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.sql.Date;
+import java.util.Date;
 
 
 @RunWith(SpringRunner.class)
@@ -21,7 +20,6 @@ public class UserSupportRepositoryTest {
 
     @Test
     public void test(){
-        UserSupport userSupport = userSupportRepository.findTodayUserSupport("1","1");
-        log.info("{}",userSupport);
+        log.info("{}",userSupportRepository.existsByUserIdAndLikedUserId("1552554739114210831","1551528072478514591")!=null);
     }
 }

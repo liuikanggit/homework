@@ -19,4 +19,6 @@ public class UserInfoForm {
     @NotEmpty(message = "头像不能为空")
     private String avatarUrl;
 
+    private String motto;
+
 }

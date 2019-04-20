@@ -14,6 +14,11 @@ import com.heo.homework.vo.ResultVO;
 import com.heo.homework.vo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * @author 刘康
@@ -54,7 +59,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public ResultVO getUserInfo(String userId) {
-        UserInfoVO userInfoVO = null;
+        UserInfoVO userInfoVO;
         if ( studentRepository.existsById(userId)){
             Student student = studentRepository.getOne(userId);
             userInfoVO = new UserInfoVO(student);
@@ -65,6 +70,10 @@ public class UserInfoServiceImpl implements UserInfoService {
             throw new MyException(ResultEnum.USER_NOT_EXIST);
         }
         userInfoVO.setLikedNum(userSupportRepository.getLikeNumByLikedUserId(userId));
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        String selfId = (String) request.getAttribute("userId");
+        userInfoVO.setLike(userSupportRepository.existsByUserIdAndLikedUserId(selfId,userId)!=null);
         return ResultVOUtil.success(userInfoVO);
     }
 }

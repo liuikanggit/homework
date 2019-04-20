@@ -18,4 +18,6 @@ public interface PostSupportRepository extends CrudRepository<PostSupport,Intege
 
     boolean existsByPostIdAndUserId(Integer postId,String userId);
 
+    Integer countByPostId(Integer postId);
+
 }

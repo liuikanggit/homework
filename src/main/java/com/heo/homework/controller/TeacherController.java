@@ -133,9 +133,8 @@ public class TeacherController {
      * @return
      */
     @GetMapping("/class/user")
-    public ResultVO getClassUserInfo(HttpServletRequest request, @RequestParam String classId) {
-        String teacherId = (String) request.getAttribute("userId");
-        return classService.getClassUserInfo(classId, teacherId);
+    public ResultVO getClassUserInfo( @RequestParam String classId) {
+        return classService.getClassUserInfo(classId);
     }
 
     /**
@@ -196,10 +195,41 @@ public class TeacherController {
      * @param postId
      * @return
      */
-    @PostMapping("/post/like")
+    @PutMapping("/post/like")
     public ResultVO likePost(HttpServletRequest request, @RequestParam Integer postId) {
         String userId = (String) request.getAttribute("userId");
         return postService.likePost(userId, UserType.STUDENT, postId);
+    }
+
+    /**
+     * 取消点赞
+     *
+     * @param request
+     * @param postId
+     * @return
+     */
+    @PutMapping("/post/unlike")
+    public ResultVO unLikePost(HttpServletRequest request, @RequestParam Integer postId) {
+        String userId = (String) request.getAttribute("userId");
+        return postService.unLikePost(userId, postId);
+    }
+
+    @GetMapping("/post/{id}")
+    public ResultVO getPostDetail(HttpServletRequest request,@PathVariable Integer id){
+        String userId = (String) request.getAttribute("userId");
+        return postService.getPostDetail(userId,UserType.TEACHER,id);
+    }
+
+    @PostMapping("/re/post")
+    public ResultVO rePost(@RequestParam Integer postId,@RequestParam Integer reId,@RequestParam String content,
+                           @RequestParam(required = false) String[] image,HttpServletRequest request){
+        String userId = (String) request.getAttribute("userId");
+        return postService.rePost(postId,reId,userId,UserType.TEACHER,content,image);
+    }
+    @PostMapping("/re/like")
+    public ResultVO likeRe(HttpServletRequest request, @RequestParam Integer reId){
+        String userId = (String) request.getAttribute("userId");
+        return postService.reSupport(reId,userId,UserType.TEACHER);
     }
 
     /**

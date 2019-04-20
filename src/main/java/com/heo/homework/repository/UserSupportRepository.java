@@ -1,9 +1,11 @@
 package com.heo.homework.repository;
 
 import com.heo.homework.entity.UserSupport;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Date;
 
 
 /**
@@ -16,6 +18,10 @@ public interface UserSupportRepository extends CrudRepository<UserSupport,Intege
     @Query(value = "select us from UserSupport us where us.userId = ?1 and us.likedUserId = ?2 and us.createTime = current_date")
     UserSupport findTodayUserSupport(String userId, String likedUserId);
 
-    @Query(value = "select NULLIF(SUM(us.num),0) from UserSupport us where us.likedUserId = ?1")
+    @Query(value = "select coalesce(SUM(us.num),0) from UserSupport us where us.likedUserId = ?1")
     Integer getLikeNumByLikedUserId(String userId);
+
+
+    @Query("select u from UserSupport u where u.userId=?1 and u.likedUserId = ?2 and u.createTime = current_date")
+    UserSupport existsByUserIdAndLikedUserId(String userId,String likeUserId);
 }

@@ -13,5 +13,5 @@ public interface ClassService {
     /** 获取班级map */
     ResultVO getClassMap();
 
-    ResultVO getClassUserInfo(String classId, String studentId);
+    ResultVO getClassUserInfo(String classId);
 }

@@ -27,6 +27,8 @@ public class Student {
 
     private String sex = "未填写";
 
+    private String motto;
+
     private Date createTime;
 
     private Date updateTime;
@@ -38,12 +40,13 @@ public class Student {
         this.studentId = KeyUtil.genUniqueKey();
     }
 
-    public void setStudentInfo(UserInfoForm studentInfoForm){
+    public void setStudentInfo(UserInfoForm studentInfoForm) {
         this.sex = studentInfoForm.getSex();
         this.studentNid = studentInfoForm.getNid();
         this.studentName = studentInfoForm.getName();
         this.studentPhone = studentInfoForm.getPhone();
         this.studentAvatarUrl = studentInfoForm.getAvatarUrl();
+        this.motto = studentInfoForm.getMotto();
     }
 
 }

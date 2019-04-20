@@ -1,12 +1,9 @@
 package com.heo.homework.service.impl;
 
-import com.heo.homework.config.TemplateIDConfig;
 import com.heo.homework.constant.HomeworkStatus;
-import com.heo.homework.dto.MessageParam;
-import com.heo.homework.entity.*;
-import com.heo.homework.entity.Class;
-import com.heo.homework.enums.ResultEnum;
-import com.heo.homework.exception.MyException;
+import com.heo.homework.entity.Homework;
+import com.heo.homework.entity.HomeworkDetail;
+import com.heo.homework.entity.HomeworkImage;
 import com.heo.homework.form.HomeworkForm;
 import com.heo.homework.repository.*;
 import com.heo.homework.service.HomeworkService;
@@ -14,16 +11,19 @@ import com.heo.homework.service.WechatMessageService;
 import com.heo.homework.utils.DateUtil;
 import com.heo.homework.utils.KeyUtil;
 import com.heo.homework.utils.ResultVOUtil;
-import com.heo.homework.vo.*;
+import com.heo.homework.vo.HomeworkDetailVO;
+import com.heo.homework.vo.HomeworkSimpleVO;
+import com.heo.homework.vo.PageVo;
+import com.heo.homework.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.rmi.CORBA.Util;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +43,15 @@ public class HomeworkServiceImpl implements HomeworkService {
 
     @Autowired
     private UploadImageServiceImpl uploadImageService;
+
+    @Autowired
+    private WechatMessageService wechatMessageService;
+
+    @Autowired
+    private ClassRepository classRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
 
     /**
@@ -65,7 +74,8 @@ public class HomeworkServiceImpl implements HomeworkService {
             }
 
             Homework homework = new Homework(classId, teacherId, imageList, date, desc);
-            homeworkRepository.save(homework);
+            homework = homeworkRepository.save(homework);
+            final String id = homework.getHomeworkId();
 
             /** 查出班级中所有的学生 */
             List<String> studentIdList = student2ClassRepository.findStudentIdByClassId(classId);
@@ -76,6 +86,10 @@ public class HomeworkServiceImpl implements HomeworkService {
                 homeworkDetail.setHomeworkId(homework.getHomeworkId());
                 homeworkDetailRepository.save(homeworkDetail);
             }
+
+            String subjectName = classRepository.getSubjectByClassId(classId);
+            String teacherName = teacherRepository.getTeacherNameByTeacherId(teacherId);
+            studentIdList.stream().forEach(sId -> wechatMessageService.sendHomeworkNotice(sId,id,subjectName,teacherName,desc, DateUtil.formatter(new Date(),"yyyy_MM-dd hh:mm"),DateUtil.formatter(date,"yyyy_MM-dd hh:mm")));
         }
         return ResultVOUtil.success();
     }

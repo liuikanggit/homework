@@ -86,8 +86,7 @@ public class ClassServiceImpl implements ClassService{
     }
 
     @Override
-    public ResultVO getClassUserInfo(String classId, String studentId) {
-
+    public ResultVO getClassUserInfo(String classId) {
         ClassUserInfoVO classUserInfoVO  = new ClassUserInfoVO();
         Class clazz = getClassByClassId(classId);
         classUserInfoVO.setId(classId);

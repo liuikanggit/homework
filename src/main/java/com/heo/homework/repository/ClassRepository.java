@@ -23,8 +23,11 @@ public interface ClassRepository extends JpaRepository<Class,String> {
             ,nativeQuery = true)
     List<Object[]> findClassMapByStudentId(String studentId);
 
-    @Query(value = "select teacherId from Class where classId = ?1")
+    @Query(value = "select classId from Class where teacherId = ?1")
     String getClassIdByTeacherId(String teacherId);
+
+    @Query(value = "select classSubject from Class where classId = ?1")
+    String getSubjectByClassId(String classId);
 
     List<Class> getAllByTeacherId(String teacherId);
 }

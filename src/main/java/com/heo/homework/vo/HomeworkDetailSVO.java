@@ -18,6 +18,8 @@ public class HomeworkDetailSVO {
     private Integer state;//(0,1,2)
     private String createTime;
     private String endTime;
+    private boolean end;
+    private String subject;
 
     /** 提交后有的值 */
     private String submitTime;

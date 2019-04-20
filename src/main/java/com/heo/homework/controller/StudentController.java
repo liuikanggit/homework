@@ -94,8 +94,8 @@ public class StudentController {
         return studentService.joinClass(studentId, classId, password);
     }
 
-    @DeleteMapping(value = "/class")
-    public ResultVO exitClass(@RequestParam String classId, @RequestParam(required = false, defaultValue = "") String password, HttpServletRequest request) {
+    @DeleteMapping(value = "/class/{classId}")
+    public ResultVO exitClass(@PathVariable String classId, HttpServletRequest request) {
         String studentId = (String) request.getAttribute("userId");
         return studentService.exitClass(studentId, classId);
     }
@@ -118,8 +118,7 @@ public class StudentController {
 
     @GetMapping("/class/user")
     public ResultVO getClassUserInfo(HttpServletRequest request,@RequestParam String classId){
-        String studentId = (String) request.getAttribute("userId");
-        return classService.getClassUserInfo(classId,studentId);
+        return classService.getClassUserInfo(classId);
     }
 
     /**
@@ -193,8 +192,11 @@ public class StudentController {
      * @return
      */
     @GetMapping("/post")
-    public ResultVO getPost(@RequestParam Integer page, @RequestParam Integer size, HttpServletRequest request) {
+    public ResultVO getPost(@RequestParam(required = false) String  self, @RequestParam Integer page, @RequestParam Integer size, HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
+        if (self!=null){
+            return postService.getSelfPost(userId, page, size);
+        }
         return postService.getAllPost(userId, page, size);
     }
 
@@ -205,10 +207,42 @@ public class StudentController {
      * @param postId
      * @return
      */
-    @PostMapping("/post/like")
+    @PutMapping("/post/like")
     public ResultVO likePost(HttpServletRequest request, @RequestParam Integer postId) {
         String userId = (String) request.getAttribute("userId");
         return postService.likePost(userId, UserType.STUDENT, postId);
+    }
+
+    /**
+     * 取消点赞
+     *
+     * @param request
+     * @param postId
+     * @return
+     */
+    @PutMapping("/post/unlike")
+    public ResultVO unLikePost(HttpServletRequest request, @RequestParam Integer postId) {
+        String userId = (String) request.getAttribute("userId");
+        return postService.unLikePost(userId, postId);
+    }
+
+    @GetMapping("/post/{id}")
+    public ResultVO getPostDetail(HttpServletRequest request,@PathVariable Integer id){
+        String userId = (String) request.getAttribute("userId");
+        return postService.getPostDetail(userId,UserType.STUDENT,id);
+    }
+
+    @PostMapping("/re/post")
+    public ResultVO rePost(@RequestParam Integer postId,@RequestParam Integer reId,@RequestParam String content,
+                           @RequestParam(required = false) String[] image,HttpServletRequest request){
+        String userId = (String) request.getAttribute("userId");
+        return postService.rePost(postId,reId,userId,UserType.STUDENT,content,image);
+    }
+
+    @PostMapping("/re/like")
+    public ResultVO likeRe(HttpServletRequest request, @RequestParam Integer reId){
+        String userId = (String) request.getAttribute("userId");
+        return postService.reSupport(reId,userId,UserType.STUDENT);
     }
 
     /**

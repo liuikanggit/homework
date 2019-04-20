@@ -269,7 +269,10 @@ public class StudentServiceImpl implements StudentService {
         hs.setImages(Arrays.asList(homework.getImage().split(",")));
         hs.setState(status);
         hs.setCreateTime(DateUtil.formatter(homework.getCreateTime(), "MM月dd日 hh:mm"));
-        hs.setEndTime(DateUtil.formatter(homework.getEndTime(), "MM/dd hh:mm"));
+        hs.setEndTime(DateUtil.formatter(homework.getEndTime(), "MM月dd日 hh:mm"));
+        hs.setEnd(new Date().after(homework.getEndTime()));
+        Class clazz = classRepository.getOne(homework.getClassId());
+        hs.setSubject(clazz.getClassSubject());
 
         if (status >= 1) {
             hs.setSubmitTime(DateUtil.formatter(homeworkDetail.getSubmitTime(), "MM/dd hh:mm"));

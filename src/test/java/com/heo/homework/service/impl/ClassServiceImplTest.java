@@ -20,6 +20,6 @@ public class ClassServiceImplTest {
 
     @Test
     public void getClassUserInfo() {
-        log.info("{}",classService.getClassUserInfo("111111","1542445507137862820"));
+        log.info("{}",classService.getClassUserInfo("111111"));
     }
 }

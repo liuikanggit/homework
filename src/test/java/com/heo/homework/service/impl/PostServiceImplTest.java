@@ -45,7 +45,7 @@ public class PostServiceImplTest {
             Assert.assertEquals(e.getMessage(), ResultEnum.REPEAT_LIST_POST.getMessage());
         }
         Assert.assertEquals(postSupportRepository.count(),count+1);
-        postService.unListPost("1",1);
+        postService.unLikePost("1",1);
         Assert.assertEquals(postSupportRepository.count(),count);
     }
 }

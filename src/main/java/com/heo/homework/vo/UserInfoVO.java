@@ -16,48 +16,68 @@ import java.util.Map;
 @Data
 public class UserInfoVO {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String id;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String openid;
 
-    /** 学号 */
+    /**
+     * 学号
+     */
     @JsonProperty("nid")
     private String nid;
 
-    /** 姓名 */
+    /**
+     * 姓名
+     */
     @JsonProperty("name")
     private String name;
 
-    /** 手机号 */
+    /**
+     * 手机号
+     */
     @JsonProperty("phone")
     private String phone;
 
-    /** 头像 */
+    /**
+     * 头像
+     */
     @JsonProperty("avatarUrl")
     private String avatarUrl;
 
-    /** 性别 */
+    /**
+     * 性别
+     */
     private String sex;
+
+    private Integer type;
 
     private Integer likedNum;
 
-    /** 与之关联的班级信息 */
+    /**
+     * 与之关联的班级信息
+     */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<Map<String,String>> classMap;
+    private List<Map<String, String>> classMap;
 
-    /** 创建日期时间 */
+    /**
+     * 创建日期时间
+     */
     @JsonSerialize(using = DateSerializer.class)
     private Date createTime;
 
-    /** 修改时间 */
+    /**
+     * 修改时间
+     */
     @JsonSerialize(using = DateSerializer.class)
     private Date updateTime;
 
-    public UserInfoVO(){}
+    private boolean isLike;
 
-    public UserInfoVO(Student student){
+    public UserInfoVO() {
+    }
+
+    public UserInfoVO(Student student) {
         this.id = student.getStudentId();
         this.nid = student.getStudentNid();
         this.name = student.getStudentName();
@@ -66,9 +86,10 @@ public class UserInfoVO {
         this.avatarUrl = student.getStudentAvatarUrl();
         this.createTime = student.getCreateTime();
         this.updateTime = student.getUpdateTime();
+        this.type = 0;
     }
 
-    public UserInfoVO(Student student,List<Map<String,String>> classMap){
+    public UserInfoVO(Student student, List<Map<String, String>> classMap) {
         this.nid = student.getStudentNid();
         this.name = student.getStudentName();
         this.phone = student.getStudentPhone();
@@ -83,18 +104,20 @@ public class UserInfoVO {
         this.classMap = classMap;
     }
 
-    public UserInfoVO(Teacher teacher){
+    public UserInfoVO(Teacher teacher) {
+        this.id = teacher.getTeacherId();
         this.name = teacher.getTeacherName();
         this.phone = teacher.getTeacherPhone();
-        this.avatarUrl = teacher.getTeacherAvatarUrl();
         this.sex = teacher.getSex();
+        this.avatarUrl = teacher.getTeacherAvatarUrl();
         this.createTime = teacher.getCreateTime();
         this.updateTime = teacher.getUpdateTime();
+        this.type = 1;
     }
 
-    public static List<UserInfoVO> forStudentList(List<Student> studentList){
+    public static List<UserInfoVO> forStudentList(List<Student> studentList) {
         List<UserInfoVO> userInfoVOS = new ArrayList<>();
-        for (Student student: studentList) {
+        for (Student student : studentList) {
             userInfoVOS.add(new UserInfoVO(student));
         }
         return userInfoVOS;

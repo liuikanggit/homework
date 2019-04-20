@@ -13,6 +13,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.text.ParseException;
@@ -40,6 +41,9 @@ public class MyExceptionHandler {
         }
         else if(e instanceof ParseException){
             return ResultVOUtil.error(ResultEnum.TIME_PARSE_ERROR);
+        }
+        else if (e instanceof MethodArgumentTypeMismatchException){
+            return ResultVOUtil.error(ResultEnum.METHOD_ARGUMENT_TYPE_MISMATCH,e.getMessage());
         }
         else {
             log.error("[系统错误{}]", e);

@@ -53,7 +53,11 @@ public class HomeworkDetailVO {
         long total = unSubmitNum+submitNum;
         submitBl = submitNum+"/"+total;
         correctBl = correctNum+"/"+total;
-        rightBl = (int) (rightScore*100/(total*100));
+        if (total == 0){
+            rightBl = 0;
+        }else {
+            rightBl = (int) (rightScore * 100 / (total * 100));
+        }
     }
 
 }

@@ -16,6 +16,9 @@ public interface StudentRepository extends JpaRepository<Student,String>,JpaSpec
 
     Student findByStudentId(String studentId);
 
+    @Query("select s.openid from Student s where s.studentId = ?1")
+    String getOpenidByStudentId(String studentId);
+
     @Query(value = "select studentId  from Student")
     List<String> findAllStudentId();
 

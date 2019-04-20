@@ -27,6 +27,8 @@ public class Post {
 
     private String image;
 
+    private Integer look;
+
     private Date createTime;
 
     public Post(){}
@@ -36,6 +38,7 @@ public class Post {
         this.title = title;
         this.content = content;
         this.image = image;
+        this.look=0;
     }
 
 }

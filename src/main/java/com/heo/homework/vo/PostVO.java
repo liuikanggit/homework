@@ -17,6 +17,8 @@ public class PostVO {
 
     private Integer id;
 
+    private String userId;
+
     private String username;
 
     private String avatar;
@@ -27,6 +29,8 @@ public class PostVO {
 
     private String image;
 
+    private Integer lookNum;
+
     private Integer supportNum;
 
     private Integer commentNum;
@@ -34,15 +38,15 @@ public class PostVO {
     @JsonSerialize(using = DateSerializer.class)
     private Date createTime;
 
-    public PostVO(Integer id,String username,String avatar,String title,String content,String image,Integer supportNum,Integer commentNum,Date createTime){
+    public PostVO(Integer id,String userId,String username,String avatar,String title,String content,String image,Integer lookNum,Date createTime){
         this.id = id;
+        this.userId  = userId;
         this.username = username;
         this.avatar =avatar;
         this.title =title;
         this.content = content;
         this.image = image;
-        this.supportNum = supportNum;
-        this.commentNum = commentNum;
+        this.lookNum = lookNum;
         this.createTime = createTime;
     }
 

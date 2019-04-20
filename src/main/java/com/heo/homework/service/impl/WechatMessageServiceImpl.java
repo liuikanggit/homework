@@ -36,6 +36,9 @@ public class WechatMessageServiceImpl implements WechatMessageService {
     private TemplateIDConfig templateIDConfig;
 
     @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
     private RedisService redisService;
 
 
@@ -44,10 +47,10 @@ public class WechatMessageServiceImpl implements WechatMessageService {
     private static final Type MAP_TYPE = new TypeToken<Map<String, String>>() {
     }.getType();
 
-    private boolean sendMessage(String userId,MessageParam messageParam) {
+    private boolean sendMessage(String userId, MessageParam messageParam) {
         /** 根据用户的id去获取formId */
         String formId = redisService.getFormId(userId);
-        if (formId == null){
+        if (formId == null) {
             log.info("信息推送失败,没有formId");
             return false;
         }
@@ -58,7 +61,7 @@ public class WechatMessageServiceImpl implements WechatMessageService {
         /** 解决body字符集问题 */
         List<HttpMessageConverter<?>> list = restTemplate.getMessageConverters();
         for (HttpMessageConverter<?> httpMessageConverter : list) {
-            if(httpMessageConverter instanceof StringHttpMessageConverter) {
+            if (httpMessageConverter instanceof StringHttpMessageConverter) {
                 ((StringHttpMessageConverter) httpMessageConverter).setDefaultCharset(StandardCharsets.UTF_8);
                 break;
             }
@@ -69,11 +72,11 @@ public class WechatMessageServiceImpl implements WechatMessageService {
         Map<String, String> result = new Gson().fromJson(response, MAP_TYPE);
         int errCode = Integer.valueOf(result.get(ERR_CODE));
         if (errCode == 0) {
-            log.info("信息推送成功{}",messageParam.toJson());
+            log.info("信息推送成功{}", messageParam.toJson());
             return true;
         } else if (errCode == 41028 || errCode == 41029) {
             log.error("信息推送失败 formId无效,过期，换formId继续", result);
-            return sendMessage(userId,messageParam);
+            return sendMessage(userId, messageParam);
         } else {
             log.error("信息推送失败 其他错误.", result);
         }
@@ -81,13 +84,25 @@ public class WechatMessageServiceImpl implements WechatMessageService {
     }
 
     @Override
-    public boolean sendRegisterNotice(String userId, String openid,String name,String userType) {
+    public boolean sendRegisterNotice(String userId, String openid, String name, String userType) {
         MessageParam messageParam = new MessageParam(openid, templateIDConfig.getRegisterNotice(), templateIDConfig.getRegisterPath());
         messageParam.addData(name).addData(userType)
                 .addData("注册后，请尽快完善个人信息")
-                .addData(DateUtil.formatter(new Date(),"yyyy年MM月dd日 hh:mm"))
+                .addData(DateUtil.formatter(new Date(), "yyyy年MM月dd日 hh:mm"))
                 .addData("恭喜成为HEO云作业新的一员！");
-        return sendMessage(userId,messageParam);
+        return sendMessage(userId, messageParam);
+    }
+
+    @Override
+    public boolean sendHomeworkNotice(String studentId,String homeworkId, String subjectName, String teacherName, String content, String beginTime, String endTime) {
+        String openid = studentRepository.getOpenidByStudentId(studentId);
+        MessageParam messageParam = new MessageParam(openid, templateIDConfig.getHomeworkNotice(), templateIDConfig.getHomeworkPath()+"?id="+homeworkId);
+        messageParam.addData(subjectName).addData(teacherName)
+                .addData(content)
+                .addData(beginTime)
+                .addData(endTime)
+                .addData("请及时完成并提交");
+        return sendMessage(studentId, messageParam);
     }
 
 }

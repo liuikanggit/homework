@@ -46,6 +46,7 @@ public enum ResultEnum {
 
     MISSING_PARAMETERS(-100,"请求缺少参数"),
     METHOD_NOT_SUPPORTED(-101,"请求方法不支持"),
+    METHOD_ARGUMENT_TYPE_MISMATCH(-102,"请求参数对应失败"),
 
     QUERY_TIMEOUT(-102, "redis查询超时"),
 
