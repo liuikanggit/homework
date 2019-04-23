@@ -189,6 +189,19 @@ public class TeacherController {
     }
 
     /**
+     * 获取帖子（分页）
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/post")
+    public ResultVO getPost( @RequestParam Integer page, @RequestParam Integer size, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        return postService.getAllPost(userId, page, size);
+    }
+
+    /**
      * 给帖子点赞
      *
      * @param request
