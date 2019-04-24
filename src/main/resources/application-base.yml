@@ -28,6 +28,8 @@ spring:
         min-idle: 0
         max-active: 8
         max-wait: -1ms
+  jackson:
+    time-zone: GMT+8
 
 wechat:
   appId: wxaa5ec51c6c3a5d36

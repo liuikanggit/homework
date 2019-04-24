@@ -51,7 +51,7 @@ public class PostDetailVO {
         this.content = content;
         this.images = Arrays.asList(image.split(","));
         this.lookNum = lookNum;
-        this.createTime = DateUtil.formatter(createTime,"yy-MM-dd hh:mm");
+        this.createTime = DateUtil.formatter(createTime,"yy-MM-dd HH:mm");
     }
 
 }

@@ -41,7 +41,7 @@ public class RePostVO {
         this.reUserId = reUserId;
         this.reUsername = reUsername1!=null?reUsername1:reUsername2;
         this.content = content;
-        this.createTime = DateUtil.formatter(createTime,"yy-MM-dd hh:mm");
+        this.createTime = DateUtil.formatter(createTime,"yy-MM-dd HH:mm");
         this.likeNum = likeNum;
     }
 

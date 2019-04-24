@@ -50,8 +50,8 @@ public class HomeworkSimpleVO {
         this.className = className;
         this.subject = subject;
         this.desc = desc;
-        this.startDate = DateUtil.formatter(startDate, "yyyy-MM-dd hh:mm");
-        this.endDate = DateUtil.formatter(endDate, "yyyy-MM-dd hh:mm");
+        this.startDate = DateUtil.formatter(startDate, "yyyy-MM-dd HH:mm");
+        this.endDate = DateUtil.formatter(endDate, "yyyy-MM-dd HH:mm");
         this.isEnd = isEnd;
     }
 }

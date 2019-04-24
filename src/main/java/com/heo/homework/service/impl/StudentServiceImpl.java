@@ -268,18 +268,18 @@ public class StudentServiceImpl implements StudentService {
         hs.setDesc(homework.getHomeworkDesc());
         hs.setImages(Arrays.asList(homework.getImage().split(",")));
         hs.setState(status);
-        hs.setCreateTime(DateUtil.formatter(homework.getCreateTime(), "MM月dd日 hh:mm"));
-        hs.setEndTime(DateUtil.formatter(homework.getEndTime(), "MM月dd日 hh:mm"));
+        hs.setCreateTime(DateUtil.formatter(homework.getCreateTime(), "MM月dd日 HH:mm"));
+        hs.setEndTime(DateUtil.formatter(homework.getEndTime(), "MM月dd日 HH:mm"));
         hs.setEnd(new Date().after(homework.getEndTime()));
         Class clazz = classRepository.getOne(homework.getClassId());
         hs.setSubject(clazz.getClassSubject());
 
         if (status >= 1) {
-            hs.setSubmitTime(DateUtil.formatter(homeworkDetail.getSubmitTime(), "MM/dd hh:mm"));
+            hs.setSubmitTime(DateUtil.formatter(homeworkDetail.getSubmitTime(), "MM/dd HH:mm"));
             hs.setSubmitImages(homeworkImageRepository.getImageUrlListByHomeworkDetailId(homeworkDetail.getId(), homeworkDetail.getSubmitNumber()));
         }
         if (status >= 2) {
-            hs.setCheckTime(DateUtil.formatter(homeworkDetail.getCheckTime(), "MM/dd hh:mm"));
+            hs.setCheckTime(DateUtil.formatter(homeworkDetail.getCheckTime(), "MM/dd HH:mm"));
             hs.setScore(homeworkDetail.getScore());
             hs.setComment(homeworkDetail.getComment());
             hs.setCorrectionImages(homeworkImageRepository.getImageUrlListByHomeworkDetailId2(homeworkDetail.getId(), homeworkDetail.getSubmitNumber()));

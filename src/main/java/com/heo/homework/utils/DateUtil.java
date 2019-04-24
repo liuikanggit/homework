@@ -29,6 +29,6 @@ public class DateUtil {
         }
     }
     public static Date parse(String dateStr){
-       return parse(dateStr,"yyyy-MM-dd hh:mm:ss");
+       return parse(dateStr,"yyyy-MM-dd HH:mm:ss");
     }
 }

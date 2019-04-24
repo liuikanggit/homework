@@ -47,7 +47,7 @@ public class HomeworkDetailVO {
     public HomeworkDetailVO(String id,Date startDate, Date endTime, String desc, String img,long unSubmitNum,long submitNum,long correctNum,long rightScore) {
         this.id = id;
         this.startDate = DateUtil.formatter(startDate,"MM月dd日");
-        this.endDate = DateUtil.formatter(endTime, "yyyy/MM/dd hh:mm");
+        this.endDate = DateUtil.formatter(endTime, "yyyy/MM/dd HH:mm");
         this.desc = desc;
         this.img = img;
         long total = unSubmitNum+submitNum;

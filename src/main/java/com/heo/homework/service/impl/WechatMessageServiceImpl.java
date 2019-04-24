@@ -88,7 +88,7 @@ public class WechatMessageServiceImpl implements WechatMessageService {
         MessageParam messageParam = new MessageParam(openid, templateIDConfig.getRegisterNotice(), templateIDConfig.getRegisterPath());
         messageParam.addData(name).addData(userType)
                 .addData("注册后，请尽快完善个人信息")
-                .addData(DateUtil.formatter(new Date(), "yyyy年MM月dd日 hh:mm"))
+                .addData(DateUtil.formatter(new Date(), "yyyy年MM月dd日 HH:mm"))
                 .addData("恭喜成为HEO云作业新的一员！");
         return sendMessage(userId, messageParam);
     }
