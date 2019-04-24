@@ -54,6 +54,8 @@ public class UserInfoVO {
 
     private Integer likedNum;
 
+    private String motto;
+
     /**
      * 与之关联的班级信息
      */
@@ -87,6 +89,7 @@ public class UserInfoVO {
         this.createTime = student.getCreateTime();
         this.updateTime = student.getUpdateTime();
         this.type = 0;
+        this.motto = student.getMotto();
     }
 
     public UserInfoVO(Student student, List<Map<String, String>> classMap) {
