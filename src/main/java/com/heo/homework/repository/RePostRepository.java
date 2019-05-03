@@ -23,6 +23,7 @@ public interface RePostRepository extends CrudRepository<RePost,Integer> {
             "left join RePost rp2 on rp2.id = rp.reId " +
             "left join com.heo.homework.entity.Student s2 on s2.studentId = rp2.userId " +
             "left join com.heo.homework.entity.Teacher t2 on t2.teacherId = rp2.userId " +
+            "where rp.postId = ?1 "+
             "order by rp.createTime ")
     List<RePostVO> getRePostVOByPostId(Integer postId);
 }

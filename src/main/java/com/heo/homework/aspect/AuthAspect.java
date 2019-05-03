@@ -98,12 +98,11 @@ public class AuthAspect {
      */
     private void collectionFormId(HttpServletRequest request) {
         String[] formIdList = request.getParameterValues("formId");
-        if (!Objects.isNull(formIdList) && formIdList.length > 0 && !formIdList[0].equals("[]")) {
+        if (!Objects.isNull(formIdList) && formIdList.length > 0) {
             String userId = (String) request.getAttribute("userId");
             log.info("formId:{} length:{}", formIdList, formIdList.length);
             for (String formId : formIdList) {
                 log.info("formId:{}", formId);
-//                3f54480addeb4759ab5c1fcf968d5798
                 if (formId.matches("\\w{32}")) {
                     redisService.saveFormId(userId, formId);
                 }

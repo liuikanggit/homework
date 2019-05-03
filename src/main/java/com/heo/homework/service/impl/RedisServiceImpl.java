@@ -142,8 +142,8 @@ public class RedisServiceImpl implements RedisService {
      * @param token
      */
     private void saveToken(String userId, String token) {
-        /** 把用户id 作为key，token作为value */
-        redisTemplate.opsForValue().set(userId, token, RedisConstant.EXPIRE, TimeUnit.SECONDS);
+//        /** 把用户id 作为key，token作为value */
+//        redisTemplate.opsForValue().set(userId, token, RedisConstant.EXPIRE, TimeUnit.SECONDS);
 
         /** 再把token_{token}作为key，用户id 作为value */
         redisTemplate.opsForValue().set(String.format(RedisConstant.TOKEN_PREFIX, token), userId, RedisConstant.EXPIRE, TimeUnit.SECONDS);
