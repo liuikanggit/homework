@@ -3,6 +3,7 @@ package com.heo.homework.vo;
 import com.heo.homework.utils.DateUtil;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +31,9 @@ public class PostDetailVO {
     private List<String> images;
 
     private String createTime;
-    /** 浏览量 */
+    /**
+     * 浏览量
+     */
     private Integer lookNum;
 
     private Integer likeNum;
@@ -42,16 +45,21 @@ public class PostDetailVO {
 
     private List<RePostVO> re;
 
-    public PostDetailVO(Integer id, String userId, String username, String avatar, String title, String content, String image,Integer lookNum, Date createTime){
+    public PostDetailVO(Integer id, String userId, String username, String avatar, String title, String content, String image, Integer lookNum, Date createTime) {
         this.id = id;
         this.userId = userId;
         this.username = username;
         this.avatar = avatar;
-        this.title =title;
+        this.title = title;
         this.content = content;
-        this.images = Arrays.asList(image.split(","));
+        if (image.length() != 0) {
+            this.images = Arrays.asList(image.split(","));
+        } else {
+            this.images = new ArrayList<>();
+        }
         this.lookNum = lookNum;
-        this.createTime = DateUtil.formatter(createTime,"yy-MM-dd HH:mm");
+        this.createTime = DateUtil.formatter(createTime, "yy-MM-dd HH:mm");
     }
+
 
 }

@@ -17,5 +17,4 @@ public class Scheduler {
         uploadImageService.clearImage();
     }
 
-
 }

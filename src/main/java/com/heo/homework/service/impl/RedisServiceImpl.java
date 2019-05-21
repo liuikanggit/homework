@@ -85,7 +85,7 @@ public class RedisServiceImpl implements RedisService {
         request.setAttribute("userId", userId);
 
         // 刷新token时间有效期
-        saveToken(userId, token);
+        redisTemplate.opsForValue().set(String.format(RedisConstant.TOKEN_PREFIX, token), userId, RedisConstant.EXPIRE, TimeUnit.SECONDS);
         return true;
     }
 
