@@ -22,12 +22,13 @@ spring:
     port: 6379
     password: zsr0925Xx
     timeout: 5000ms
-    jedis:
+    lettuce:
+      shutdown-timeout: 100
       pool:
         max-idle: 8
+        max-wait: 30
         min-idle: 0
         max-active: 8
-        max-wait: -1ms
   jackson:
     time-zone: GMT+8
 
