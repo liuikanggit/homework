@@ -3,6 +3,7 @@ package com.heo.homework.service.impl;
 import com.heo.homework.constant.RedisConstant;
 import com.heo.homework.entity.Admin;
 import com.heo.homework.entity.Student;
+import com.heo.homework.entity.Teacher;
 import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
 import com.heo.homework.repository.AdminRepository;

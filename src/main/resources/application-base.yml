@@ -38,7 +38,7 @@ wechat:
 template:
   #作业通知模板
   homeworkNotice: bt6CSxvfPOqW_HkMJV2trZOuclxWpsw4JKJcHP4MGfQ
-  homeworkPath: /pages/workDetail/main
+  homeworkPath: /pages/homeworkInfo/main
   #注册成功模板
   registerNotice: 6iYnad2ZsRwANpFYeUO_onnWb8vHKFPZduRAo9acRjE
   registerPath: /pages/index/main

@@ -89,7 +89,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 
             String subjectName = classRepository.getSubjectByClassId(classId);
             String teacherName = teacherRepository.getTeacherNameByTeacherId(teacherId);
-            studentIdList.stream().forEach(sId -> wechatMessageService.sendHomeworkNotice(sId,id,subjectName,teacherName,desc, DateUtil.formatter(new Date(),"yyyy_MM-dd hh:mm"),DateUtil.formatter(date,"yyyy_MM-dd hh:mm")));
+            studentIdList.stream().forEach(sId -> wechatMessageService.sendHomeworkNotice(sId,id,subjectName,teacherName,desc, DateUtil.formatter(new Date(),"yyyy-MM-dd HH:mm"),DateUtil.formatter(date,"yyyy-MM-dd HH:mm")));
         }
         return ResultVOUtil.success();
     }
