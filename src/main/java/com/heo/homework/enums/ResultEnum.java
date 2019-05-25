@@ -44,6 +44,8 @@ public enum ResultEnum {
     NO_AUTH(-3,"无权限操作"),
     LOGIN_INVALID(-4,"未登录或登录失效，请重新登录"),
 
+    NETWORK_ERROR(-5,"您的网络出问题了！"),
+
     MISSING_PARAMETERS(-100,"请求缺少参数"),
     METHOD_NOT_SUPPORTED(-101,"请求方法不支持"),
     METHOD_ARGUMENT_TYPE_MISMATCH(-102,"请求参数对应失败"),

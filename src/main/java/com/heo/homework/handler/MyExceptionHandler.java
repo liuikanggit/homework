@@ -4,6 +4,7 @@ import com.heo.homework.enums.ResultEnum;
 import com.heo.homework.exception.MyException;
 import com.heo.homework.utils.ResultVOUtil;
 import com.heo.homework.vo.ResultVO;
+import io.lettuce.core.RedisException;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,12 @@ public class MyExceptionHandler {
         }
         else if(e instanceof QueryTimeoutException){
             log.error("redis连接超时{}",e);
-            return ResultVOUtil.error(ResultEnum.QUERY_TIMEOUT,e.getMessage());
+//            return ResultVOUtil.error(ResultEnum.QUERY_TIMEOUT,e.getMessage());
+            return ResultVOUtil.error(ResultEnum.NETWORK_ERROR,e.getMessage());
+        }
+        else if(e instanceof RedisException){
+            log.error("redis又出问题了",e);
+            return ResultVOUtil.error(ResultEnum.NETWORK_ERROR,e.getMessage());
         }
         else if(e instanceof ParseException){
             return ResultVOUtil.error(ResultEnum.TIME_PARSE_ERROR);
